@@ -1,0 +1,40 @@
+{
+  "jd_parse_cases": [
+    {
+      "id": "case_jd_agent",
+      "input": "负责 AI Agent 应用开发，要求 Python、RAG、Prompt Engineering、向量数据库、工具调用和 API 集成，有 LangChain 与模型评测经验优先。",
+      "expected_skills": ["Python", "RAG", "Prompt Engineering", "向量数据库", "工具调用", "API 集成", "LangChain", "模型评测"]
+    },
+    {
+      "id": "case_jd_java",
+      "input": "负责 Java 后端服务建设，熟悉 Spring Boot、MySQL、Redis、微服务、消息队列、Docker、Kubernetes 和可观测性。",
+      "expected_skills": ["Java", "Spring Boot", "MySQL", "Redis", "微服务", "消息队列", "Docker", "Kubernetes", "可观测性"]
+    }
+  ],
+  "resume_parse_cases": [
+    {
+      "id": "case_resume_agent",
+      "input": "熟悉 Python、FastAPI、RAG、Prompt Engineering 和向量数据库，做过企业知识助手和智能客服项目。",
+      "expected_skills": ["Python", "FastAPI", "RAG", "Prompt Engineering", "向量数据库"]
+    },
+    {
+      "id": "case_resume_java",
+      "input": "3 年 Java 后端经验，熟悉 Spring Boot、MySQL、Redis、消息队列、微服务和 Docker，了解 Kubernetes。",
+      "expected_skills": ["Java", "Spring Boot", "MySQL", "Redis", "消息队列", "微服务", "Docker", "Kubernetes"]
+    }
+  ],
+  "match_cases": [
+    {
+      "id": "case_match_agent",
+      "job_id": "ai_agent_engineer",
+      "resume_text": "熟悉 Python、FastAPI、RAG、Prompt Engineering、向量数据库和 API 集成，参与智能客服 Agent 项目。",
+      "expected_min_score": 65
+    },
+    {
+      "id": "case_match_java",
+      "job_id": "java_backend_engineer",
+      "resume_text": "熟悉 Java、Spring Boot、MySQL、Redis、微服务、消息队列、Docker 和 REST API。",
+      "expected_min_score": 80
+    }
+  ]
+}

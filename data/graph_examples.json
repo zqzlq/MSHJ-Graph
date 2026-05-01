@@ -1,0 +1,25 @@
+{
+  "ai_agent_engineer": {
+    "job": "AI Agent 应用工程师",
+    "nodes": [
+      {"id": "job:ai_agent_engineer", "type": "job", "label": "AI Agent 应用工程师"},
+      {"id": "skill:RAG", "type": "skill", "label": "RAG"},
+      {"id": "skill:工具调用", "type": "skill", "label": "工具调用"},
+      {"id": "skill:向量数据库", "type": "skill", "label": "向量数据库"},
+      {"id": "scenario:企业知识助手", "type": "scenario", "label": "企业知识助手"}
+    ],
+    "edges": [
+      {"source": "job:ai_agent_engineer", "target": "skill:RAG", "relation": "required"},
+      {"source": "job:ai_agent_engineer", "target": "skill:工具调用", "relation": "required"},
+      {"source": "job:ai_agent_engineer", "target": "skill:向量数据库", "relation": "required"},
+      {"source": "job:ai_agent_engineer", "target": "scenario:企业知识助手", "relation": "applies_to"}
+    ]
+  },
+  "java_backend_engineer_update": {
+    "job": "Java 开发工程师",
+    "baseline_batch": "2024Q2",
+    "current_batch": "2026Q2",
+    "expected_added": ["Docker", "Kubernetes", "可观测性", "云原生", "大模型 API 集成"],
+    "interpretation": "既有 Java 岗位从传统后端能力扩展到云原生部署、稳定性治理和 AI 服务集成。"
+  }
+}

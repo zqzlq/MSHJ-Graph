@@ -1,0 +1,76 @@
+{
+  "jobs": [
+    {
+      "id": "ai_agent_engineer",
+      "title": "AI Agent 应用工程师",
+      "category": "emerging",
+      "level": "中级",
+      "definition": "面向企业智能化场景，基于大模型、RAG、工具调用和多智能体编排能力，设计、开发、评测并持续优化 AI Agent 应用的复合型工程岗位。",
+      "core_responsibilities": [
+        "设计 AI Agent 工作流、工具调用链路和任务规划策略",
+        "构建 RAG 知识库、检索增强问答和企业知识接入能力",
+        "落地 Agent 评测、提示词优化、模型调用监控和安全防护",
+        "与业务系统集成，实现客服、办公、研发等场景的智能助手"
+      ],
+      "required_skills": ["Python", "大模型应用", "Prompt Engineering", "RAG", "向量数据库", "工具调用", "API 集成", "FastAPI"],
+      "bonus_skills": ["LangChain", "多智能体协作", "模型评测", "MLOps", "知识图谱"],
+      "industry_scenarios": ["智能客服", "企业知识助手", "研发提效", "办公自动化"],
+      "evidence_sources": ["招聘网站A-2026-03", "技术社区趋势报告-2026", "企业访谈样例-2026"]
+    },
+    {
+      "id": "java_backend_engineer",
+      "title": "Java 开发工程师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "负责企业后端服务设计、开发、测试和运维，近年来能力要求从传统 CRUD 和微服务扩展到云原生、可观测性、AI 接口集成和高并发治理。",
+      "core_responsibilities": [
+        "负责 Java 后端服务设计、开发与接口联调",
+        "建设微服务、消息队列、缓存和数据库访问能力",
+        "优化系统性能、稳定性、可观测性和交付效率",
+        "对接 AI 服务、数据服务和企业内部平台"
+      ],
+      "required_skills": ["Java", "Spring Boot", "MySQL", "Redis", "微服务", "消息队列", "Docker", "REST API"],
+      "bonus_skills": ["Kubernetes", "可观测性", "云原生", "大模型 API 集成", "性能调优"],
+      "industry_scenarios": ["企业应用", "金融科技", "电商平台", "数据中台"],
+      "evidence_sources": ["招聘网站B-2024-05", "招聘网站B-2026-04", "企业 JD 样例库"]
+    }
+  ],
+  "jd_records": [
+    {
+      "id": "jd_agent_001",
+      "job_id": "ai_agent_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站A",
+      "date": "2026-03-12",
+      "title": "AI Agent 应用工程师",
+      "content": "岗位职责：负责企业 AI Agent 应用开发，设计任务规划、工具调用、RAG 知识库和提示词策略。要求熟悉 Python、FastAPI、大模型应用、Prompt Engineering、向量数据库、API 集成，有 LangChain、多智能体协作、模型评测经验优先。场景包括智能客服、企业知识助手和办公自动化。"
+    },
+    {
+      "id": "jd_agent_002",
+      "job_id": "ai_agent_engineer",
+      "batch": "2026Q1",
+      "source": "技术社区趋势报告",
+      "date": "2026-02-28",
+      "title": "Agentic AI 工程师",
+      "content": "新兴岗位强调围绕 LLM 构建可执行任务的智能体系统，技能包括 RAG、工具调用、函数调用、多智能体协作、知识图谱、模型评测和 MLOps，需要能接入企业 API 并控制幻觉风险。"
+    },
+    {
+      "id": "jd_java_2024",
+      "job_id": "java_backend_engineer",
+      "batch": "2024Q2",
+      "source": "招聘网站B",
+      "date": "2024-05-20",
+      "title": "Java 后端开发工程师",
+      "content": "负责 Java 后端开发，熟悉 Spring Boot、MySQL、Redis、REST API、消息队列和微服务。具备 Linux、单元测试、接口联调和性能调优经验优先。"
+    },
+    {
+      "id": "jd_java_2026",
+      "job_id": "java_backend_engineer",
+      "batch": "2026Q2",
+      "source": "招聘网站B",
+      "date": "2026-04-08",
+      "title": "Java 开发工程师",
+      "content": "负责云原生 Java 后端服务建设，要求 Spring Boot、微服务、MySQL、Redis、消息队列、Docker、Kubernetes、可观测性和性能调优。加分项包括大模型 API 集成、数据服务对接和自动化交付。"
+    }
+  ]
+}

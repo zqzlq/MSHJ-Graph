@@ -1,0 +1,16 @@
+{
+  "resumes": [
+    {
+      "id": "resume_001",
+      "name": "张同学",
+      "target_job_id": "ai_agent_engineer",
+      "text": "张同学，计算机专业硕士。熟悉 Python、FastAPI、REST API 和向量数据库，参与企业知识助手项目，负责 RAG 检索增强、Prompt Engineering、API 集成和智能客服工作流。了解 LangChain、模型评测和知识图谱。"
+    },
+    {
+      "id": "resume_002",
+      "name": "李同学",
+      "target_job_id": "java_backend_engineer",
+      "text": "李同学，本科。3 年 Java 后端经验，熟悉 Spring Boot、MySQL、Redis、消息队列、微服务和 Docker，做过电商订单系统性能调优。了解 Kubernetes、可观测性和大模型 API 集成。"
+    }
+  ]
+}
