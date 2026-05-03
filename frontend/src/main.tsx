@@ -268,7 +268,7 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
   graphRef.current = { nodes, edges };
 
   React.useEffect(() => {
-    const W = 980, H = 620, CX = W / 2, CY = H / 2;
+    const W = 1200, H = 750, CX = W / 2, CY = H / 2;
     const { nodes: gNodes, edges: gEdges } = graphRef.current;
     const nodeMap = new Map(nodesRef.current.map((n) => [n.id, n]));
     const oldIds = new Set(nodeMap.keys());
@@ -282,8 +282,8 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
         ...kept.map((n) => nodeMap.get(n.id)!),
         ...added.map((n, i) => ({
           ...n,
-          x: CX + Math.cos(i * angleStep) * 200 + (Math.random() - 0.5) * 60,
-          y: CY + Math.sin(i * angleStep) * 200 + (Math.random() - 0.5) * 60,
+          x: CX + Math.cos(i * angleStep) * 280 + (Math.random() - 0.5) * 100,
+          y: CY + Math.sin(i * angleStep) * 280 + (Math.random() - 0.5) * 100,
           vx: 0,
           vy: 0,
         })),
@@ -297,13 +297,14 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
     let active = true;
 
     function step() {
-      if (!active || iterRef.current >= 100) return;
+      if (!active || iterRef.current >= 250) return;
       const ns = nodesRef.current;
       const es = edgesRef.current;
       const N = ns.length;
-      const repulsion = 12000;
-      const damping = 0.88;
-      const maxV = 30;
+      const repulsion = 45000;
+      const damping = 0.82;
+      const maxV = 40;
+      const minDist = 90;
 
       for (let i = 0; i < N; i++) {
         let fx = 0, fy = 0;
@@ -311,10 +312,15 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
           if (i === j) continue;
           const dx = ns[i].x - ns[j].x;
           const dy = ns[i].y - ns[j].y;
-          const d2 = dx * dx + dy * dy + 1;
-          const f = repulsion / d2;
-          fx += (dx / Math.sqrt(d2)) * f;
-          fy += (dy / Math.sqrt(d2)) * f;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const f = repulsion / (dist * dist);
+          fx += (dx / dist) * f;
+          fy += (dy / dist) * f;
+          if (dist < minDist) {
+            const push = (minDist - dist) * 0.5;
+            fx += (dx / dist) * push;
+            fy += (dy / dist) * push;
+          }
         }
         ns[i].vx = (ns[i].vx + fx) * damping;
         ns[i].vy = (ns[i].vy + fy) * damping;
@@ -328,8 +334,8 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
         const dx = ns[ti].x - ns[si].x;
         const dy = ns[ti].y - ns[si].y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const targetDist = 200;
-        const force = (dist - targetDist) * 0.008;
+        const targetDist = 220;
+        const force = (dist - targetDist) * 0.006;
         const fx = (dx / dist) * force;
         const fy = (dy / dist) * force;
         ns[si].vx += fx;
@@ -339,14 +345,14 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
       }
 
       for (const node of ns) {
-        node.vx += (CX - node.x) * 0.0008;
-        node.vy += (CY - node.y) * 0.0008;
+        node.vx += (CX - node.x) * 0.001;
+        node.vy += (CY - node.y) * 0.001;
         node.vx = Math.max(-maxV, Math.min(maxV, node.vx));
         node.vy = Math.max(-maxV, Math.min(maxV, node.vy));
         node.x += node.vx;
         node.y += node.vy;
-        node.x = Math.max(40, Math.min(W - 40, node.x));
-        node.y = Math.max(40, Math.min(H - 40, node.y));
+        node.x = Math.max(60, Math.min(W - 60, node.x));
+        node.y = Math.max(60, Math.min(H - 60, node.y));
       }
 
       iterRef.current++;
@@ -387,7 +393,7 @@ function GraphCanvas({
   onSelectNode: (id: string) => void;
   nodesRef: React.RefObject<ForceNode[]>;
 }) {
-  const W = 980, H = 620;
+  const W = 1200, H = 750;
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [viewBox, setViewBox] = React.useState({ x: 0, y: 0, w: W, h: H });
   const [search, setSearch] = React.useState('');
@@ -609,6 +615,25 @@ function App() {
   const [pathSource, setPathSource] = React.useState('');
   const [pathTarget, setPathTarget] = React.useState('');
   const [pathResult, setPathResult] = React.useState<{ path: Array<{ id: string; label: string; type: string }>; edges: Array<{ source: string; target: string; relation: string }>; length?: number; error?: string } | null>(null);
+  const [uploadedFileName, setUploadedFileName] = React.useState('');
+
+  async function handleFileUpload(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await fetch(`${API_BASE}/api/upload/resume`, { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.error) {
+        alert(data.error);
+      } else {
+        setUploadedFileName(file.name);
+        setResumeText(data.raw_text_length > 0 ? `（已上传 ${file.name}，解析到 ${data.skills.length} 项技能）\n\n` + (data.projects?.join('\n') ?? '') : '');
+        setParsedResume(data);
+      }
+    } catch {
+      alert('上传失败，请检查后端服务');
+    }
+  }
 
   async function loadData() {
     setLoading(true);
@@ -1035,30 +1060,46 @@ function App() {
             <select value={selectedJob} onChange={(event) => setSelectedJob(event.target.value)}>
               {jobs.map((job) => <option value={job.id} key={job.id}>{job.title}</option>)}
             </select>
-            <label>上传简历文件（PDF/TXT）</label>
-            <input
-              type="file"
-              accept=".pdf,.txt"
-              style={{ marginBottom: 14 }}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
+            <label>上传简历文件</label>
+            <div
+              className={`upload-zone ${uploadedFileName ? 'has-file' : ''}`}
+              onClick={() => document.getElementById('resume-file-input')?.click()}
+              onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('dragover'); }}
+              onDragLeave={(e) => e.currentTarget.classList.remove('dragover')}
+              onDrop={async (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('dragover');
+                const file = e.dataTransfer.files?.[0];
                 if (!file) return;
-                const formData = new FormData();
-                formData.append('file', file);
-                try {
-                  const res = await fetch(`${API_BASE}/api/upload/resume`, { method: 'POST', body: formData });
-                  const data = await res.json();
-                  if (data.error) {
-                    alert(data.error);
-                  } else {
-                    setResumeText(data.raw_text_length > 0 ? `（已上传 ${file.name}，解析到 ${data.skills.length} 项技能）\n\n` + (data.projects?.join('\n') ?? '') : '');
-                    setParsedResume(data);
-                  }
-                } catch {
-                  alert('上传失败，请检查后端服务');
-                }
+                await handleFileUpload(file);
               }}
-            />
+            >
+              <input
+                id="resume-file-input"
+                type="file"
+                accept=".pdf,.txt"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) await handleFileUpload(file);
+                }}
+              />
+              {uploadedFileName ? (
+                <>
+                  <CheckCircle2 size={28} className="upload-zone-icon" style={{ color: '#16a34a' }} />
+                  <span className="upload-zone-name">{uploadedFileName}</span>
+                  <span className="upload-zone-text">点击或拖拽重新上传</span>
+                </>
+              ) : (
+                <>
+                  <svg className="upload-zone-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  <span className="upload-zone-text">点击选择或拖拽 PDF / TXT 文件到此处</span>
+                </>
+              )}
+            </div>
             <label>简历文本</label>
             <textarea value={resumeText} onChange={(event) => setResumeText(event.target.value)} />
             <div className="button-row">

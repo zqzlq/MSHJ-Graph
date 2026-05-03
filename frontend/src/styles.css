@@ -508,8 +508,8 @@ p {
   background-size: 28px 28px;
   border: 1px dashed #cad6ea;
   border-radius: 22px;
-  min-height: 620px;
-  max-height: 80vh;
+  min-height: 750px;
+  max-height: 85vh;
   overflow: hidden;
   padding: 12px;
   user-select: none;
@@ -572,7 +572,7 @@ p {
 .knowledge-graph {
   display: block;
   width: 100%;
-  min-height: 590px;
+  min-height: 720px;
 }
 
 .knowledge-graph marker path {
@@ -805,6 +805,57 @@ textarea {
   line-height: 1.6;
   min-height: 230px;
   resize: vertical;
+}
+
+.upload-zone {
+  align-items: center;
+  border: 2px dashed #c8d5ea;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 14px;
+  min-height: 100px;
+  padding: 20px;
+  text-align: center;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.upload-zone:hover {
+  background: #f0f5ff;
+  border-color: #2f6df6;
+}
+
+.upload-zone.dragover {
+  background: #e8efff;
+  border-color: #2f6df6;
+}
+
+.upload-zone.has-file {
+  background: #e8f8ef;
+  border-color: #16a34a;
+  border-style: solid;
+}
+
+.upload-zone-icon {
+  color: #8a9bbd;
+}
+
+.upload-zone-text {
+  color: #6a7488;
+  font-size: 14px;
+}
+
+.upload-zone-name {
+  color: #16a34a;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.upload-zone input[type="file"] {
+  display: none;
 }
 
 .button-row {
