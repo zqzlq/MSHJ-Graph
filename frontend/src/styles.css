@@ -509,14 +509,15 @@ p {
   border: 1px dashed #cad6ea;
   border-radius: 22px;
   min-height: 620px;
-  overflow: hidden;
+  max-height: 80vh;
+  overflow: auto;
   padding: 12px;
 }
 
 .knowledge-graph {
   display: block;
-  height: 590px;
   width: 100%;
+  min-height: 590px;
 }
 
 .knowledge-graph marker path {

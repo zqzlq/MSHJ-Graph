@@ -20,7 +20,7 @@ def test_analyze_existing_job_updates():
 
     assert "Kubernetes" in update["added"]
     assert "可观测性" in update["added"]
-    assert update["baseline_batch"] == "2024Q2"
+    assert update["baseline_batch"] == "2023Q4"
     assert update["current_batch"] == "2026Q2"
 
 

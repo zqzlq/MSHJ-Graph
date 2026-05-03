@@ -11,6 +11,78 @@
       "name": "李同学",
       "target_job_id": "java_backend_engineer",
       "text": "李同学，本科。3 年 Java 后端经验，熟悉 Spring Boot、MySQL、Redis、消息队列、微服务和 Docker，做过电商订单系统性能调优。了解 Kubernetes、可观测性和大模型 API 集成。"
+    },
+    {
+      "id": "resume_003",
+      "name": "王同学",
+      "target_job_id": "llm_algorithm_engineer",
+      "text": "王同学，人工智能专业博士。5 年深度学习研究经验，熟悉 PyTorch、NLP、深度学习和模型微调。参与过大模型 SFT 和 RLHF 项目，了解模型评测、Prompt Engineering 和大模型应用。发表 ACL/EMNLP 论文 3 篇。"
+    },
+    {
+      "id": "resume_004",
+      "name": "赵同学",
+      "target_job_id": "frontend_engineer",
+      "text": "赵同学，本科。2 年前端开发经验，熟悉 JavaScript、TypeScript、React、HTML/CSS，做过企业管理后台和数据可视化大屏。了解 Vue、前端工程化和 REST API 接口联调。"
+    },
+    {
+      "id": "resume_005",
+      "name": "孙同学",
+      "target_job_id": "bigdata_engineer",
+      "text": "孙同学，硕士。4 年大数据开发经验，熟悉 Java、Spark、Hive、Hadoop、SQL 和数据仓库。做过用户画像和实时数仓项目，了解 Flink、数据治理和 Kafka。"
+    },
+    {
+      "id": "resume_006",
+      "name": "周同学",
+      "target_job_id": "test_development_engineer",
+      "text": "周同学，本科。3 年测试开发经验，熟悉 Python、自动化测试、性能测试和 REST API。搭建过接口自动化框架和 CI/CD 质量门禁，了解 Docker 和 Git。"
+    },
+    {
+      "id": "resume_007",
+      "name": "吴同学",
+      "target_job_id": "devops_engineer",
+      "text": "吴同学，本科。4 年运维和 DevOps 经验，熟悉 Linux、Docker、Kubernetes、CI/CD 和可观测性。搭建过 Prometheus + Grafana 监控体系和 GitOps 发布流程，了解 Python 和 Shell 脚本。"
+    },
+    {
+      "id": "resume_008",
+      "name": "郑同学",
+      "target_job_id": "data_analyst",
+      "text": "郑同学，统计学硕士。2 年数据分析经验，熟悉 SQL、Python、数据分析和数据仓库。做过用户增长分析和 AB 测试，了解机器学习和数据可视化。"
+    },
+    {
+      "id": "resume_009",
+      "name": "陈同学",
+      "target_job_id": "go_backend_engineer",
+      "text": "陈同学，本科。3 年 Go 后端开发经验，熟悉 Go、微服务、MySQL、Redis、REST API 和 Docker。做过即时通讯后端和消息推送服务，了解 Kubernetes 和 gRPC。"
+    },
+    {
+      "id": "resume_010",
+      "name": "黄同学",
+      "target_job_id": "recommendation_engineer",
+      "text": "黄同学，硕士。4 年推荐系统经验，熟悉 Python、机器学习、推荐系统、特征工程和 Redis。做过信息流推荐和电商推荐，了解深度学习、PyTorch 和 Spark。"
+    },
+    {
+      "id": "resume_011",
+      "name": "林同学",
+      "target_job_id": "ai_product_manager",
+      "text": "林同学，MBA。3 年产品经理经验，1 年 AI 产品经验。熟悉需求分析、用户研究和数据分析，主导过智能客服产品从 0 到 1，了解大模型应用和 Prompt Engineering。"
+    },
+    {
+      "id": "resume_012",
+      "name": "何同学",
+      "target_job_id": "security_engineer",
+      "text": "何同学，本科。3 年安全工程经验，熟悉网络安全、渗透测试和 Linux。做过安全审计和漏洞管理，了解 Python、Docker 和 CI/CD 安全集成。"
+    },
+    {
+      "id": "resume_013",
+      "name": "刘同学",
+      "target_job_id": "ai_agent_engineer",
+      "text": "刘同学，本科应届生。熟悉 Python 和 FastAPI，了解 RAG、Prompt Engineering 和向量数据库。在校期间做过课程项目：基于 LangChain 的文档问答系统。学习能力强，但缺乏工程化和生产环境经验。"
+    },
+    {
+      "id": "resume_014",
+      "name": "杨同学",
+      "target_job_id": "java_backend_engineer",
+      "text": "杨同学，硕士。5 年 Java 后端经验，熟悉 Java、Spring Boot、MySQL、Redis、微服务、消息队列、Docker、Kubernetes、可观测性和性能调优。主导过金融级高可用系统建设，了解云原生和大模型 API 集成。"
     }
   ]
 }

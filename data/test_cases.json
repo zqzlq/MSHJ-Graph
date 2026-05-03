@@ -9,6 +9,71 @@
       "id": "case_jd_java",
       "input": "负责 Java 后端服务建设，熟悉 Spring Boot、MySQL、Redis、微服务、消息队列、Docker、Kubernetes 和可观测性。",
       "expected_skills": ["Java", "Spring Boot", "MySQL", "Redis", "微服务", "消息队列", "Docker", "Kubernetes", "可观测性"]
+    },
+    {
+      "id": "case_jd_llm",
+      "input": "负责大模型训练和微调，包括 SFT、LoRA 和 RLHF。要求 Python、PyTorch、深度学习、NLP、模型微调和模型评测。",
+      "expected_skills": ["Python", "PyTorch", "深度学习", "NLP", "模型微调", "模型评测"]
+    },
+    {
+      "id": "case_jd_frontend",
+      "input": "负责前端架构设计与开发，要求 TypeScript、React、HTML/CSS、前端工程化、Git、REST API，了解 Vue 和 Next.js。",
+      "expected_skills": ["TypeScript", "React", "HTML/CSS", "前端工程化", "Git", "REST API", "Vue", "Next.js"]
+    },
+    {
+      "id": "case_jd_bigdata",
+      "input": "负责大数据平台建设，要求 Java、Spark、Flink、Hive、Hadoop、数据仓库、ETL 和 SQL。",
+      "expected_skills": ["Java", "Spark", "Flink", "Hive", "Hadoop", "数据仓库", "ETL", "SQL"]
+    },
+    {
+      "id": "case_jd_test",
+      "input": "负责自动化测试框架开发，要求 Python、自动化测试、性能测试、CI/CD、REST API 和 Git。",
+      "expected_skills": ["Python", "自动化测试", "性能测试", "CI/CD", "REST API", "Git"]
+    },
+    {
+      "id": "case_jd_devops",
+      "input": "负责容器化部署和可观测性建设，要求 Linux、Docker、Kubernetes、CI/CD、可观测性和 Shell。",
+      "expected_skills": ["Linux", "Docker", "Kubernetes", "CI/CD", "可观测性"]
+    },
+    {
+      "id": "case_jd_analyst",
+      "input": "负责数据驱动的业务决策，要求 SQL、Python、数据分析、数据仓库和需求分析，了解机器学习。",
+      "expected_skills": ["SQL", "Python", "数据分析", "数据仓库", "需求分析", "机器学习"]
+    },
+    {
+      "id": "case_jd_go",
+      "input": "使用 Go 开发高性能微服务和中间件，要求 Go、微服务、MySQL、Redis、REST API、Docker 和 gRPC。",
+      "expected_skills": ["Go", "微服务", "MySQL", "Redis", "REST API", "Docker", "gRPC"]
+    },
+    {
+      "id": "case_jd_rec",
+      "input": "负责推荐系统全链路优化，要求 Python、机器学习、推荐系统、特征工程、SQL、Redis、深度学习和 PyTorch。",
+      "expected_skills": ["Python", "机器学习", "推荐系统", "特征工程", "SQL", "Redis", "深度学习", "PyTorch"]
+    },
+    {
+      "id": "case_jd_pm",
+      "input": "负责 AI 产品规划，要求需求分析、用户研究、数据分析、大模型应用、项目管理和 Prompt Engineering。",
+      "expected_skills": ["需求分析", "用户研究", "数据分析", "大模型应用", "项目管理", "Prompt Engineering"]
+    },
+    {
+      "id": "case_jd_security",
+      "input": "负责零信任架构和安全体系建设，要求网络安全、渗透测试、Linux、Python、REST API 和 Docker。",
+      "expected_skills": ["网络安全", "渗透测试", "Linux", "Python", "REST API", "Docker"]
+    },
+    {
+      "id": "case_jd_agent_full",
+      "input": "构建基于大模型的企业智能体应用，负责 RAG 知识库搭建、工具调用编排、多智能体协作、Prompt Engineering、模型评测和 MLOps。要求 Python、FastAPI、LangChain、向量数据库、API 集成，了解知识图谱。",
+      "expected_skills": ["RAG", "工具调用", "多智能体协作", "Prompt Engineering", "模型评测", "MLOps", "Python", "FastAPI", "LangChain", "向量数据库", "API 集成", "知识图谱"]
+    },
+    {
+      "id": "case_jd_java_legacy",
+      "input": "负责 Java Web 应用开发，熟悉 Java、Spring Boot、MySQL、Redis 和 REST API。",
+      "expected_skills": ["Java", "Spring Boot", "MySQL", "Redis", "REST API"]
+    },
+    {
+      "id": "case_jd_frontend_vue",
+      "input": "使用 Vue 框架开发前端页面，要求 JavaScript、Vue、HTML/CSS、Git，了解小程序开发。",
+      "expected_skills": ["JavaScript", "Vue", "HTML/CSS", "Git", "小程序"]
     }
   ],
   "resume_parse_cases": [
@@ -21,6 +86,71 @@
       "id": "case_resume_java",
       "input": "3 年 Java 后端经验，熟悉 Spring Boot、MySQL、Redis、消息队列、微服务和 Docker，了解 Kubernetes。",
       "expected_skills": ["Java", "Spring Boot", "MySQL", "Redis", "消息队列", "微服务", "Docker", "Kubernetes"]
+    },
+    {
+      "id": "case_resume_llm",
+      "input": "5 年深度学习研究经验，熟悉 PyTorch、NLP、深度学习和模型微调。参与过大模型 SFT 和 RLHF 项目，了解模型评测和大模型应用。",
+      "expected_skills": ["PyTorch", "NLP", "深度学习", "模型微调", "模型评测", "大模型应用"]
+    },
+    {
+      "id": "case_resume_frontend",
+      "input": "2 年前端开发经验，熟悉 JavaScript、TypeScript、React、HTML/CSS，做过数据可视化大屏。了解 Vue 和前端工程化。",
+      "expected_skills": ["JavaScript", "TypeScript", "React", "HTML/CSS", "Vue", "前端工程化"]
+    },
+    {
+      "id": "case_resume_bigdata",
+      "input": "4 年大数据开发经验，熟悉 Java、Spark、Hive、Hadoop、SQL 和数据仓库。做过用户画像项目，了解 Flink 和数据治理。",
+      "expected_skills": ["Java", "Spark", "Hive", "Hadoop", "SQL", "数据仓库", "Flink", "数据治理"]
+    },
+    {
+      "id": "case_resume_test",
+      "input": "3 年测试开发经验，熟悉 Python、自动化测试、性能测试和 REST API。搭建过 CI/CD 质量门禁，了解 Docker。",
+      "expected_skills": ["Python", "自动化测试", "性能测试", "REST API", "CI/CD", "Docker"]
+    },
+    {
+      "id": "case_resume_devops",
+      "input": "4 年 DevOps 经验，熟悉 Linux、Docker、Kubernetes、CI/CD 和可观测性。搭建过 Prometheus 监控体系，了解 Python 和 Shell。",
+      "expected_skills": ["Linux", "Docker", "Kubernetes", "CI/CD", "可观测性", "Python"]
+    },
+    {
+      "id": "case_resume_go",
+      "input": "3 年 Go 后端开发经验，熟悉 Go、微服务、MySQL、Redis、REST API 和 Docker。了解 Kubernetes 和 gRPC。",
+      "expected_skills": ["Go", "微服务", "MySQL", "Redis", "REST API", "Docker", "Kubernetes", "gRPC"]
+    },
+    {
+      "id": "case_resume_rec",
+      "input": "4 年推荐系统经验，熟悉 Python、机器学习、推荐系统、特征工程和 Redis。了解深度学习和 PyTorch。",
+      "expected_skills": ["Python", "机器学习", "推荐系统", "特征工程", "Redis", "深度学习", "PyTorch"]
+    },
+    {
+      "id": "case_resume_security",
+      "input": "3 年安全工程经验，熟悉网络安全、渗透测试和 Linux。了解 Python 和 Docker 安全配置。",
+      "expected_skills": ["网络安全", "渗透测试", "Linux", "Python", "Docker"]
+    },
+    {
+      "id": "case_resume_analyst",
+      "input": "2 年数据分析经验，熟悉 SQL、Python、数据分析和数据仓库。做过用户增长分析，了解机器学习。",
+      "expected_skills": ["SQL", "Python", "数据分析", "数据仓库", "机器学习"]
+    },
+    {
+      "id": "case_resume_pm",
+      "input": "3 年产品经理经验，熟悉需求分析、用户研究和数据分析。主导过智能客服产品，了解大模型应用和 Prompt Engineering。",
+      "expected_skills": ["需求分析", "用户研究", "数据分析", "大模型应用", "Prompt Engineering"]
+    },
+    {
+      "id": "case_resume_agent_senior",
+      "input": "负责 AI Agent 平台架构设计，使用 Python 和 FastAPI 构建后端，集成 RAG 知识库、工具调用和多智能体协作。使用 LangChain 框架，向量数据库做检索，部署在 Docker 和 Kubernetes 上。",
+      "expected_skills": ["Python", "FastAPI", "RAG", "工具调用", "多智能体协作", "LangChain", "向量数据库", "Docker", "Kubernetes"]
+    },
+    {
+      "id": "case_resume_java_senior",
+      "input": "5 年 Java 后端经验，主导过金融级微服务架构。熟悉 Java、Spring Boot、MySQL、Redis、微服务、消息队列、Docker、Kubernetes、可观测性、性能调优和云原生。了解大模型 API 集成。",
+      "expected_skills": ["Java", "Spring Boot", "MySQL", "Redis", "微服务", "消息队列", "Docker", "Kubernetes", "可观测性", "性能调优", "云原生", "大模型 API 集成"]
+    },
+    {
+      "id": "case_resume_fullstack",
+      "input": "全栈开发经验，前端用 React 和 TypeScript，后端用 Python 和 FastAPI，数据库用 MySQL 和 Redis。了解 Docker、Git 和 REST API。",
+      "expected_skills": ["React", "TypeScript", "Python", "FastAPI", "MySQL", "Redis", "Docker", "Git", "REST API"]
     }
   ],
   "match_cases": [
@@ -35,6 +165,84 @@
       "job_id": "java_backend_engineer",
       "resume_text": "熟悉 Java、Spring Boot、MySQL、Redis、微服务、消息队列、Docker 和 REST API。",
       "expected_min_score": 80
+    },
+    {
+      "id": "case_match_llm",
+      "job_id": "llm_algorithm_engineer",
+      "resume_text": "熟悉 Python、PyTorch、深度学习、NLP、模型微调和模型评测，有大模型 SFT 经验。",
+      "expected_min_score": 75
+    },
+    {
+      "id": "case_match_frontend",
+      "job_id": "frontend_engineer",
+      "resume_text": "熟悉 JavaScript、TypeScript、React、HTML/CSS、Git 和 REST API，做过管理后台。",
+      "expected_min_score": 80
+    },
+    {
+      "id": "case_match_bigdata",
+      "job_id": "bigdata_engineer",
+      "resume_text": "熟悉 Java、Spark、Hive、Hadoop、SQL、数据仓库和 ETL，了解 Flink。",
+      "expected_min_score": 80
+    },
+    {
+      "id": "case_match_test",
+      "job_id": "test_development_engineer",
+      "resume_text": "熟悉 Python、自动化测试、性能测试、REST API、CI/CD 和 Git。",
+      "expected_min_score": 80
+    },
+    {
+      "id": "case_match_devops",
+      "job_id": "devops_engineer",
+      "resume_text": "熟悉 Linux、Docker、Kubernetes、CI/CD、可观测性和 Shell 脚本。",
+      "expected_min_score": 80
+    },
+    {
+      "id": "case_match_analyst",
+      "job_id": "data_analyst",
+      "resume_text": "熟悉 SQL、Python、数据分析和数据仓库，做过用户增长分析。",
+      "expected_min_score": 65
+    },
+    {
+      "id": "case_match_go",
+      "job_id": "go_backend_engineer",
+      "resume_text": "熟悉 Go、微服务、MySQL、Redis、REST API、Docker 和 Linux。",
+      "expected_min_score": 80
+    },
+    {
+      "id": "case_match_rec",
+      "job_id": "recommendation_engineer",
+      "resume_text": "熟悉 Python、机器学习、推荐系统、特征工程、SQL 和 Redis。",
+      "expected_min_score": 75
+    },
+    {
+      "id": "case_match_agent_full",
+      "job_id": "ai_agent_engineer",
+      "resume_text": "熟悉 Python、FastAPI、大模型应用、Prompt Engineering、RAG、向量数据库、工具调用、API 集成、LangChain 和多智能体协作。",
+      "expected_min_score": 90
+    },
+    {
+      "id": "case_match_java_full",
+      "job_id": "java_backend_engineer",
+      "resume_text": "5 年 Java 后端经验，熟悉 Java、Spring Boot、MySQL、Redis、微服务、消息队列、Docker、REST API、Kubernetes、可观测性和性能调优。",
+      "expected_min_score": 95
+    },
+    {
+      "id": "case_match_low",
+      "job_id": "ai_agent_engineer",
+      "resume_text": "熟悉 Python 和基本的数据分析。",
+      "expected_min_score": 5
+    },
+    {
+      "id": "case_match_pm",
+      "job_id": "ai_product_manager",
+      "resume_text": "熟悉需求分析、用户研究、数据分析、大模型应用和项目管理。",
+      "expected_min_score": 75
+    },
+    {
+      "id": "case_match_security",
+      "job_id": "security_engineer",
+      "resume_text": "熟悉网络安全、渗透测试、Linux、Python 和 REST API。",
+      "expected_min_score": 75
     }
   ]
 }

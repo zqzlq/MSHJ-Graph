@@ -33,9 +33,188 @@
       "bonus_skills": ["Kubernetes", "可观测性", "云原生", "大模型 API 集成", "性能调优"],
       "industry_scenarios": ["企业应用", "金融科技", "电商平台", "数据中台"],
       "evidence_sources": ["招聘网站B-2024-05", "招聘网站B-2026-04", "企业 JD 样例库"]
+    },
+    {
+      "id": "llm_algorithm_engineer",
+      "title": "大模型算法工程师",
+      "category": "emerging",
+      "level": "高级",
+      "definition": "负责大语言模型的训练、微调、评测和部署，研究前沿技术如 RLHF、MoE、长上下文等，推动大模型在企业场景中的落地应用。",
+      "core_responsibilities": [
+        "负责大模型的预训练、SFT 微调和 RLHF 对齐",
+        "设计模型评测体系，覆盖通用能力和垂直场景",
+        "优化模型推理性能，降低延迟和成本",
+        "研究前沿技术并推动在业务中落地"
+      ],
+      "required_skills": ["Python", "深度学习", "PyTorch", "NLP", "模型微调", "大模型应用", "模型评测"],
+      "bonus_skills": ["TensorFlow", "分布式系统", "模型部署", "Linux", "特征工程"],
+      "industry_scenarios": ["智能对话", "内容生成", "代码助手", "知识管理"],
+      "evidence_sources": ["招聘网站C-2025-06", "招聘网站C-2026-03", "AI 实验室访谈"]
+    },
+    {
+      "id": "frontend_engineer",
+      "title": "前端开发工程师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "负责 Web 前端架构设计与开发，近年来能力要求从传统页面开发扩展到 TypeScript、组件化、性能优化、SSR 和跨端开发。",
+      "core_responsibilities": [
+        "负责前端页面开发、组件设计和交互实现",
+        "建设前端工程化体系：构建工具、代码规范、自动化测试",
+        "优化页面性能、加载速度和用户体验",
+        "与后端联调 API，对接数据服务和可视化需求"
+      ],
+      "required_skills": ["JavaScript", "TypeScript", "React", "HTML/CSS", "Git", "REST API"],
+      "bonus_skills": ["Vue", "Next.js", "前端工程化", "小程序", "性能调优"],
+      "industry_scenarios": ["企业管理后台", "电商平台", "数据可视化", "SaaS 产品"],
+      "evidence_sources": ["招聘网站D-2024-03", "招聘网站D-2025-09", "招聘网站D-2026-02"]
+    },
+    {
+      "id": "bigdata_engineer",
+      "title": "大数据开发工程师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "负责企业大数据平台建设，包括数据采集、清洗、存储、计算和治理，近年来能力要求扩展到实时计算、数据湖和 AI 数据服务。",
+      "core_responsibilities": [
+        "设计和开发大数据处理管线（ETL/ELT）",
+        "建设数据仓库、数据湖和实时计算平台",
+        "保障数据质量、数据治理和元数据管理",
+        "支撑业务分析、AI 训练和数据产品需求"
+      ],
+      "required_skills": ["Java", "Spark", "Hive", "Hadoop", "SQL", "数据仓库", "ETL"],
+      "bonus_skills": ["Flink", "数据治理", "Python", "Kafka", "Linux"],
+      "industry_scenarios": ["数据中台", "用户画像", "风控数据", "BI 分析"],
+      "evidence_sources": ["招聘网站E-2024-01", "招聘网站E-2025-06", "招聘网站E-2026-03"]
+    },
+    {
+      "id": "test_development_engineer",
+      "title": "测试开发工程师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "负责测试体系建设，包括自动化测试框架开发、性能测试、接口测试和持续集成，近年来能力要求扩展到 AI 辅助测试和全链路质量保障。",
+      "core_responsibilities": [
+        "设计和开发自动化测试框架与工具平台",
+        "执行接口测试、性能测试和兼容性测试",
+        "建设 CI/CD 流水线中的质量门禁",
+        "分析缺陷趋势，推动质量改进"
+      ],
+      "required_skills": ["Python", "自动化测试", "性能测试", "REST API", "CI/CD", "Git"],
+      "bonus_skills": ["Java", "测试开发", "Docker", "SQL", "Linux"],
+      "industry_scenarios": ["金融系统测试", "电商平台测试", "移动应用测试", "微服务测试"],
+      "evidence_sources": ["招聘网站F-2024-04", "招聘网站F-2025-08", "招聘网站F-2026-01"]
+    },
+    {
+      "id": "devops_engineer",
+      "title": "DevOps 工程师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "负责企业基础设施和运维自动化，近年来能力要求从传统运维扩展到容器编排、可观测性、GitOps 和 AIOps。",
+      "core_responsibilities": [
+        "建设和维护 CI/CD 流水线与发布体系",
+        "管理 Kubernetes 集群和容器化部署",
+        "建设可观测性体系：日志、指标、链路追踪",
+        "实施安全加固、灾备演练和成本优化"
+      ],
+      "required_skills": ["Linux", "Docker", "Kubernetes", "CI/CD", "可观测性", "Shell"],
+      "bonus_skills": ["云原生", "Python", "网络安全", "分布式系统", "Git"],
+      "industry_scenarios": ["云平台运维", "金融级高可用", "全球化部署", "混合云管理"],
+      "evidence_sources": ["招聘网站G-2024-02", "招聘网站G-2025-07", "招聘网站G-2026-02"]
+    },
+    {
+      "id": "data_analyst",
+      "title": "数据分析师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "负责业务数据分析与洞察，近年来能力要求从传统报表扩展到数据可视化、AB 测试、用户增长分析和 AI 辅助分析。",
+      "core_responsibilities": [
+        "构建业务指标体系，输出分析报告和洞察",
+        "设计和执行 AB 测试，验证产品假设",
+        "搭建数据看板和自动化报表",
+        "支撑产品决策、运营策略和增长优化"
+      ],
+      "required_skills": ["SQL", "Python", "数据分析", "数据仓库", "需求分析"],
+      "bonus_skills": ["机器学习", "用户研究", "数据治理", "Excel", "BI 工具"],
+      "industry_scenarios": ["用户增长", "电商运营", "金融风控", "广告投放"],
+      "evidence_sources": ["招聘网站H-2024-03", "招聘网站H-2025-10", "招聘网站H-2026-01"]
+    },
+    {
+      "id": "go_backend_engineer",
+      "title": "Go 后端开发工程师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "使用 Go 语言开发高性能后端服务，近年来能力要求从基础服务开发扩展到微服务治理、云原生部署和中间件开发。",
+      "core_responsibilities": [
+        "使用 Go 开发高性能微服务和中间件",
+        "设计服务架构、API 接口和数据模型",
+        "优化系统吞吐量、延迟和资源利用率",
+        "参与基础设施建设：RPC 框架、配置中心、服务网格"
+      ],
+      "required_skills": ["Go", "微服务", "MySQL", "Redis", "REST API", "Docker", "Linux"],
+      "bonus_skills": ["Kubernetes", "gRPC", "消息队列", "分布式系统", "性能调优"],
+      "industry_scenarios": ["云服务", "即时通讯", "游戏后端", "基础架构"],
+      "evidence_sources": ["招聘网站I-2024-06", "招聘网站I-2025-09", "招聘网站I-2026-03"]
+    },
+    {
+      "id": "recommendation_engineer",
+      "title": "推荐系统工程师",
+      "category": "existing",
+      "level": "高级",
+      "definition": "负责推荐系统全链路建设，包括召回、排序、重排和策略优化，近年来能力要求扩展到大模型增强推荐和实时个性化。",
+      "core_responsibilities": [
+        "设计和优化推荐系统召回-排序-重排管线",
+        "构建特征工程平台和实时特征服务",
+        "优化推荐效果指标：CTR、CVR、用户留存",
+        "探索大模型在推荐场景的应用"
+      ],
+      "required_skills": ["Python", "机器学习", "推荐系统", "特征工程", "SQL", "Redis"],
+      "bonus_skills": ["深度学习", "PyTorch", "Spark", "大模型应用", "数据分析"],
+      "industry_scenarios": ["信息流推荐", "电商推荐", "广告排序", "内容分发"],
+      "evidence_sources": ["招聘网站J-2024-04", "招聘网站J-2025-08", "招聘网站J-2026-02"]
+    },
+    {
+      "id": "ai_product_manager",
+      "title": "AI 产品经理",
+      "category": "emerging",
+      "level": "中级",
+      "definition": "负责 AI 产品的需求定义、功能设计和效果评估，需要理解大模型能力边界，能将 AI 技术转化为可落地的产品方案。",
+      "core_responsibilities": [
+        "定义 AI 产品需求、功能规格和验收标准",
+        "设计 AI 交互体验、Prompt 策略和效果评估方案",
+        "协调算法、工程和业务团队推动产品落地",
+        "跟踪行业趋势，挖掘 AI 产品机会"
+      ],
+      "required_skills": ["需求分析", "用户研究", "数据分析", "大模型应用", "项目管理"],
+      "bonus_skills": ["Prompt Engineering", "Python", "机器学习", "RAG", "知识图谱"],
+      "industry_scenarios": ["AI 助手", "智能客服", "内容平台", "企业服务"],
+      "evidence_sources": ["招聘网站K-2025-03", "招聘网站K-2025-11", "招聘网站K-2026-04"]
+    },
+    {
+      "id": "security_engineer",
+      "title": "网络安全工程师",
+      "category": "existing",
+      "level": "中级",
+      "definition": "负责企业网络安全体系建设，近年来能力要求从传统安全运维扩展到零信任架构、AI 安全、云安全和合规治理。",
+      "core_responsibilities": [
+        "实施网络安全防护、漏洞管理和应急响应",
+        "建设安全审计、合规检查和风险评估体系",
+        "推动安全编码规范和 DevSecOps 实践",
+        "研究 AI 安全、数据安全和隐私保护"
+      ],
+      "required_skills": ["网络安全", "渗透测试", "Linux", "REST API", "Python"],
+      "bonus_skills": ["Docker", "Kubernetes", "SQL", "CI/CD", "数据分析"],
+      "industry_scenarios": ["金融安全", "云安全", "数据合规", "AI 安全"],
+      "evidence_sources": ["招聘网站L-2024-05", "招聘网站L-2025-09", "招聘网站L-2026-01"]
     }
   ],
   "jd_records": [
+    {
+      "id": "jd_agent_001b",
+      "job_id": "ai_agent_engineer",
+      "batch": "2025Q4",
+      "source": "招聘网站A",
+      "date": "2025-12-05",
+      "title": "AI Agent 开发工程师",
+      "content": "负责 AI Agent 应用开发，要求 Python、FastAPI、大模型应用、RAG、Prompt Engineering，了解工具调用和向量数据库，有智能客服或知识助手项目经验优先。"
+    },
     {
       "id": "jd_agent_001",
       "job_id": "ai_agent_engineer",
@@ -55,6 +234,33 @@
       "content": "新兴岗位强调围绕 LLM 构建可执行任务的智能体系统，技能包括 RAG、工具调用、函数调用、多智能体协作、知识图谱、模型评测和 MLOps，需要能接入企业 API 并控制幻觉风险。"
     },
     {
+      "id": "jd_agent_003",
+      "job_id": "ai_agent_engineer",
+      "batch": "2025Q3",
+      "source": "招聘网站A",
+      "date": "2025-08-15",
+      "title": "AI 应用开发工程师",
+      "content": "负责 AI 应用开发，包括大模型接口调用、Prompt Engineering、RAG 知识库搭建和 API 集成。要求 Python、FastAPI 基础，了解向量数据库和 LangChain，有企业知识助手或智能客服项目经验优先。"
+    },
+    {
+      "id": "jd_agent_004",
+      "job_id": "ai_agent_engineer",
+      "batch": "2025Q3",
+      "source": "企业访谈样例",
+      "date": "2025-09-01",
+      "title": "LLM 应用工程师",
+      "content": "构建基于大模型的企业应用，负责 Prompt Engineering、RAG 检索增强、工具调用和 API 集成。要求熟悉 Python、大模型应用、向量数据库，了解模型评测和 MLOps。"
+    },
+    {
+      "id": "jd_java_2023",
+      "job_id": "java_backend_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站B",
+      "date": "2023-11-15",
+      "title": "Java 初级开发工程师",
+      "content": "负责 Java 后端模块开发，熟悉 Java、Spring Boot、MySQL、Redis，了解 REST API 和单元测试。有微服务项目经验优先。"
+    },
+    {
       "id": "jd_java_2024",
       "job_id": "java_backend_engineer",
       "batch": "2024Q2",
@@ -71,6 +277,384 @@
       "date": "2026-04-08",
       "title": "Java 开发工程师",
       "content": "负责云原生 Java 后端服务建设，要求 Spring Boot、微服务、MySQL、Redis、消息队列、Docker、Kubernetes、可观测性和性能调优。加分项包括大模型 API 集成、数据服务对接和自动化交付。"
+    },
+    {
+      "id": "jd_java_2025",
+      "job_id": "java_backend_engineer",
+      "batch": "2025Q2",
+      "source": "招聘网站B",
+      "date": "2025-06-10",
+      "title": "Java 高级开发工程师",
+      "content": "负责 Java 微服务架构设计与开发，要求 Spring Boot、MySQL、Redis、消息队列、Docker、微服务治理。加分项：Kubernetes、可观测性、CI/CD、性能优化。"
+    },
+    {
+      "id": "jd_java_2025b",
+      "job_id": "java_backend_engineer",
+      "batch": "2025Q3",
+      "source": "企业 JD 样例库",
+      "date": "2025-09-18",
+      "title": "Java 后端开发工程师",
+      "content": "负责金融科技后端服务开发，要求 Java、Spring Boot、MySQL、Redis、微服务、消息队列、Docker。加分项：Kubernetes、大模型 API 集成、性能调优。"
+    },
+    {
+      "id": "jd_llm_001b",
+      "job_id": "llm_algorithm_engineer",
+      "batch": "2025Q4",
+      "source": "招聘网站C",
+      "date": "2025-12-10",
+      "title": "大模型算法工程师",
+      "content": "负责大模型微调和评测，要求 Python、PyTorch、深度学习、NLP、模型微调、模型评测，了解 Prompt Engineering 和大模型应用，有分布式训练经验优先。"
+    },
+    {
+      "id": "jd_llm_001",
+      "job_id": "llm_algorithm_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站C",
+      "date": "2026-03-05",
+      "title": "大模型算法工程师",
+      "content": "负责大模型训练和微调，包括 SFT、LoRA 和 RLHF。要求 Python、PyTorch、深度学习、NLP 基础扎实，有模型评测和分布式训练经验优先。了解 Prompt Engineering 和大模型应用。"
+    },
+    {
+      "id": "jd_llm_002",
+      "job_id": "llm_algorithm_engineer",
+      "batch": "2026Q1",
+      "source": "AI 实验室访谈",
+      "date": "2026-02-20",
+      "title": "LLM 研究工程师",
+      "content": "研究大语言模型前沿技术，负责模型微调、评测和部署。技能要求：Python、PyTorch、深度学习、NLP、模型微调、模型评测，了解分布式系统和模型部署。"
+    },
+    {
+      "id": "jd_llm_003",
+      "job_id": "llm_algorithm_engineer",
+      "batch": "2025Q2",
+      "source": "招聘网站C",
+      "date": "2025-06-18",
+      "title": "NLP 算法工程师",
+      "content": "负责 NLP 算法研发和模型训练，包括文本分类、信息抽取和对话系统。要求 Python、深度学习、PyTorch、NLP，有大模型微调经验优先。"
+    },
+    {
+      "id": "jd_llm_004",
+      "job_id": "llm_algorithm_engineer",
+      "batch": "2025Q3",
+      "source": "招聘网站C",
+      "date": "2025-09-02",
+      "title": "大模型研发工程师",
+      "content": "参与大模型研发，负责 SFT 微调、模型评测和推理优化。要求 Python、PyTorch、深度学习、NLP、模型微调，了解特征工程和 TensorFlow。"
+    },
+    {
+      "id": "jd_frontend_001b",
+      "job_id": "frontend_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站D",
+      "date": "2023-12-05",
+      "title": "Web 前端开发",
+      "content": "负责 Web 页面开发，熟悉 JavaScript、HTML/CSS、React，了解 Git 版本管理和接口联调。"
+    },
+    {
+      "id": "jd_frontend_001",
+      "job_id": "frontend_engineer",
+      "batch": "2024Q1",
+      "source": "招聘网站D",
+      "date": "2024-03-15",
+      "title": "前端开发工程师",
+      "content": "负责 Web 前端开发，熟悉 JavaScript、HTML/CSS、React 或 Vue，了解 REST API 接口联调和 Git 版本管理。"
+    },
+    {
+      "id": "jd_frontend_002",
+      "job_id": "frontend_engineer",
+      "batch": "2025Q3",
+      "source": "招聘网站D",
+      "date": "2025-09-20",
+      "title": "前端开发工程师",
+      "content": "负责前端架构设计与开发，要求 TypeScript、React、HTML/CSS、前端工程化、Git、REST API。加分项：Vue、Next.js、小程序、性能优化。"
+    },
+    {
+      "id": "jd_frontend_003",
+      "job_id": "frontend_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站D",
+      "date": "2026-02-10",
+      "title": "高级前端工程师",
+      "content": "负责前端技术选型和架构设计，要求 TypeScript、React、Next.js、前端工程化、性能调优。加分项：Vue、小程序、SSR、数据可视化、Node.js。"
+    },
+    {
+      "id": "jd_bigdata_001b",
+      "job_id": "bigdata_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站E",
+      "date": "2023-11-25",
+      "title": "大数据开发工程师",
+      "content": "负责数据仓库 ETL 开发，要求 Java、Hive、Hadoop、SQL，了解 Spark 和数据仓库建模。"
+    },
+    {
+      "id": "jd_bigdata_001",
+      "job_id": "bigdata_engineer",
+      "batch": "2024Q1",
+      "source": "招聘网站E",
+      "date": "2024-01-20",
+      "title": "大数据开发工程师",
+      "content": "负责数据仓库开发和 ETL 管线建设，要求 Java、Spark、Hive、Hadoop、SQL，了解数据仓库建模。"
+    },
+    {
+      "id": "jd_bigdata_002",
+      "job_id": "bigdata_engineer",
+      "batch": "2025Q2",
+      "source": "招聘网站E",
+      "date": "2025-06-05",
+      "title": "大数据开发工程师",
+      "content": "负责大数据平台建设，要求 Java、Spark、Hive、Hadoop、SQL、数据仓库、ETL。加分项：Flink、数据治理、Python、Kafka。"
+    },
+    {
+      "id": "jd_bigdata_003",
+      "job_id": "bigdata_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站E",
+      "date": "2026-03-10",
+      "title": "大数据开发工程师",
+      "content": "负责实时计算和数据湖平台建设，要求 Spark、Flink、Hive、Hadoop、数据仓库、ETL、SQL。加分项：数据治理、Python、Kafka、Linux、数据质量。"
+    },
+    {
+      "id": "jd_test_001b",
+      "job_id": "test_development_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站F",
+      "date": "2023-12-01",
+      "title": "测试工程师",
+      "content": "负责功能测试和接口测试，了解 Python、自动化测试基础、REST API，有测试用例编写经验。"
+    },
+    {
+      "id": "jd_test_001",
+      "job_id": "test_development_engineer",
+      "batch": "2024Q2",
+      "source": "招聘网站F",
+      "date": "2024-04-10",
+      "title": "测试开发工程师",
+      "content": "负责自动化测试框架开发和接口测试，要求 Python、自动化测试、REST API、Git，了解性能测试。"
+    },
+    {
+      "id": "jd_test_002",
+      "job_id": "test_development_engineer",
+      "batch": "2025Q2",
+      "source": "招聘网站F",
+      "date": "2025-08-15",
+      "title": "测试开发工程师",
+      "content": "负责测试平台建设和 CI/CD 质量门禁，要求 Python、自动化测试、性能测试、REST API、CI/CD、Git。加分项：Java、Docker、测试开发。"
+    },
+    {
+      "id": "jd_test_003",
+      "job_id": "test_development_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站F",
+      "date": "2026-01-20",
+      "title": "高级测试开发工程师",
+      "content": "负责全链路质量保障体系建设，要求 Python、自动化测试、性能测试、CI/CD、REST API、Git。加分项：Docker、测试开发、SQL、Linux、AI 辅助测试。"
+    },
+    {
+      "id": "jd_devops_001b",
+      "job_id": "devops_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站G",
+      "date": "2023-11-10",
+      "title": "运维工程师",
+      "content": "负责服务器日常运维和监控，要求 Linux、Shell 脚本，了解 Docker 和网络基础。"
+    },
+    {
+      "id": "jd_devops_001",
+      "job_id": "devops_engineer",
+      "batch": "2024Q1",
+      "source": "招聘网站G",
+      "date": "2024-02-15",
+      "title": "运维开发工程师",
+      "content": "负责服务器运维和自动化脚本开发，要求 Linux、Shell、Docker、CI/CD，了解网络基础。"
+    },
+    {
+      "id": "jd_devops_002",
+      "job_id": "devops_engineer",
+      "batch": "2025Q3",
+      "source": "招聘网站G",
+      "date": "2025-07-20",
+      "title": "DevOps 工程师",
+      "content": "负责容器化部署和可观测性建设，要求 Linux、Docker、Kubernetes、CI/CD、可观测性。加分项：云原生、Python、Shell。"
+    },
+    {
+      "id": "jd_devops_003",
+      "job_id": "devops_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站G",
+      "date": "2026-02-25",
+      "title": "DevOps 工程师",
+      "content": "负责 GitOps 和云原生基础设施建设，要求 Linux、Docker、Kubernetes、CI/CD、可观测性、云原生。加分项：Python、网络安全、分布式系统、Git。"
+    },
+    {
+      "id": "jd_analyst_001b",
+      "job_id": "data_analyst",
+      "batch": "2023Q4",
+      "source": "招聘网站H",
+      "date": "2023-12-15",
+      "title": "数据分析师",
+      "content": "负责日常数据报表和业务分析，要求 SQL、Excel、数据分析基础，了解 Python 优先。"
+    },
+    {
+      "id": "jd_analyst_001",
+      "job_id": "data_analyst",
+      "batch": "2024Q1",
+      "source": "招聘网站H",
+      "date": "2024-03-10",
+      "title": "数据分析师",
+      "content": "负责业务数据分析和报表开发，要求 SQL、Python、数据分析，了解 Excel 和数据可视化。"
+    },
+    {
+      "id": "jd_analyst_002",
+      "job_id": "data_analyst",
+      "batch": "2025Q4",
+      "source": "招聘网站H",
+      "date": "2025-10-15",
+      "title": "数据分析师",
+      "content": "负责数据驱动的业务决策，要求 SQL、Python、数据分析、数据仓库、需求分析。加分项：机器学习、用户研究、数据治理。"
+    },
+    {
+      "id": "jd_analyst_003",
+      "job_id": "data_analyst",
+      "batch": "2026Q1",
+      "source": "招聘网站H",
+      "date": "2026-01-08",
+      "title": "高级数据分析师",
+      "content": "负责指标体系设计和增长分析，要求 SQL、Python、数据分析、数据仓库、需求分析。加分项：机器学习、用户研究、数据治理、BI 工具、AB 测试。"
+    },
+    {
+      "id": "jd_go_001b",
+      "job_id": "go_backend_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站I",
+      "date": "2023-12-20",
+      "title": "Go 开发工程师",
+      "content": "使用 Go 开发后端服务，要求 Go、MySQL、Redis、REST API、Linux，了解微服务。"
+    },
+    {
+      "id": "jd_go_001",
+      "job_id": "go_backend_engineer",
+      "batch": "2024Q2",
+      "source": "招聘网站I",
+      "date": "2024-06-10",
+      "title": "Go 后端开发工程师",
+      "content": "使用 Go 开发高性能后端服务，要求 Go、微服务、MySQL、Redis、REST API、Linux。"
+    },
+    {
+      "id": "jd_go_002",
+      "job_id": "go_backend_engineer",
+      "batch": "2025Q3",
+      "source": "招聘网站I",
+      "date": "2025-09-25",
+      "title": "Go 高级开发工程师",
+      "content": "负责 Go 微服务架构和中间件开发，要求 Go、微服务、MySQL、Redis、REST API、Docker、Linux。加分项：Kubernetes、gRPC、消息队列。"
+    },
+    {
+      "id": "jd_go_003",
+      "job_id": "go_backend_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站I",
+      "date": "2026-03-15",
+      "title": "Go 后端开发工程师",
+      "content": "负责云原生 Go 服务和基础设施开发，要求 Go、微服务、Docker、Linux、REST API、MySQL、Redis。加分项：Kubernetes、gRPC、分布式系统、性能调优、消息队列。"
+    },
+    {
+      "id": "jd_rec_001b",
+      "job_id": "recommendation_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站J",
+      "date": "2023-12-08",
+      "title": "推荐算法工程师",
+      "content": "负责推荐算法研发和优化，要求 Python、机器学习、SQL，了解推荐系统和特征工程。"
+    },
+    {
+      "id": "jd_rec_001",
+      "job_id": "recommendation_engineer",
+      "batch": "2024Q2",
+      "source": "招聘网站J",
+      "date": "2024-04-20",
+      "title": "推荐算法工程师",
+      "content": "负责推荐系统算法研发，要求 Python、机器学习、推荐系统、特征工程、SQL。"
+    },
+    {
+      "id": "jd_rec_002",
+      "job_id": "recommendation_engineer",
+      "batch": "2025Q2",
+      "source": "招聘网站J",
+      "date": "2025-08-10",
+      "title": "推荐系统工程师",
+      "content": "负责推荐系统全链路优化，要求 Python、机器学习、推荐系统、特征工程、SQL、Redis。加分项：深度学习、PyTorch、Spark。"
+    },
+    {
+      "id": "jd_rec_003",
+      "job_id": "recommendation_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站J",
+      "date": "2026-02-18",
+      "title": "推荐系统工程师",
+      "content": "负责推荐系统建设和大模型增强推荐，要求 Python、机器学习、推荐系统、特征工程、SQL、Redis。加分项：深度学习、PyTorch、大模型应用、数据分析、Spark。"
+    },
+    {
+      "id": "jd_pm_001",
+      "job_id": "ai_product_manager",
+      "batch": "2025Q1",
+      "source": "招聘网站K",
+      "date": "2025-03-20",
+      "title": "AI 产品经理",
+      "content": "负责 AI 产品规划和需求定义，要求需求分析、用户研究、数据分析、项目管理，了解大模型应用。"
+    },
+    {
+      "id": "jd_pm_002",
+      "job_id": "ai_product_manager",
+      "batch": "2025Q4",
+      "source": "招聘网站K",
+      "date": "2025-11-05",
+      "title": "AI 产品经理",
+      "content": "负责 AI Agent 产品设计，要求需求分析、用户研究、数据分析、大模型应用、项目管理。加分项：Prompt Engineering、Python、RAG。"
+    },
+    {
+      "id": "jd_pm_003",
+      "job_id": "ai_product_manager",
+      "batch": "2026Q2",
+      "source": "招聘网站K",
+      "date": "2026-04-12",
+      "title": "AI 高级产品经理",
+      "content": "负责 AI 产品矩阵规划，要求需求分析、用户研究、数据分析、大模型应用、项目管理、Prompt Engineering。加分项：Python、机器学习、RAG、知识图谱。"
+    },
+    {
+      "id": "jd_security_001b",
+      "job_id": "security_engineer",
+      "batch": "2023Q4",
+      "source": "招聘网站L",
+      "date": "2023-11-28",
+      "title": "安全运维工程师",
+      "content": "负责安全设备运维和日志分析，要求网络安全基础、Linux，了解 Python 和渗透测试。"
+    },
+    {
+      "id": "jd_security_001",
+      "job_id": "security_engineer",
+      "batch": "2024Q2",
+      "source": "招聘网站L",
+      "date": "2024-05-08",
+      "title": "网络安全工程师",
+      "content": "负责网络安全防护和漏洞管理，要求网络安全、渗透测试、Linux，了解 Python 和 REST API 安全。"
+    },
+    {
+      "id": "jd_security_002",
+      "job_id": "security_engineer",
+      "batch": "2025Q3",
+      "source": "招聘网站L",
+      "date": "2025-09-12",
+      "title": "安全工程师",
+      "content": "负责安全体系建设和 DevSecOps 实践，要求网络安全、渗透测试、Linux、REST API、Python。加分项：Docker、CI/CD。"
+    },
+    {
+      "id": "jd_security_003",
+      "job_id": "security_engineer",
+      "batch": "2026Q1",
+      "source": "招聘网站L",
+      "date": "2026-01-22",
+      "title": "高级安全工程师",
+      "content": "负责零信任架构和 AI 安全，要求网络安全、渗透测试、Linux、Python、REST API。加分项：Docker、Kubernetes、CI/CD、数据分析、SQL。"
     }
   ]
 }

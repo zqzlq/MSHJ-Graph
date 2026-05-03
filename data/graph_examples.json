@@ -17,9 +17,34 @@
   },
   "java_backend_engineer_update": {
     "job": "Java 开发工程师",
-    "baseline_batch": "2024Q2",
+    "baseline_batch": "2023Q4",
     "current_batch": "2026Q2",
-    "expected_added": ["Docker", "Kubernetes", "可观测性", "云原生", "大模型 API 集成"],
+    "expected_added": ["Docker", "Kubernetes", "可观测性", "云原生", "大模型 API 集成", "CI/CD", "性能调优"],
     "interpretation": "既有 Java 岗位从传统后端能力扩展到云原生部署、稳定性治理和 AI 服务集成。"
+  },
+  "llm_algorithm_engineer": {
+    "job": "大模型算法工程师",
+    "nodes": [
+      {"id": "job:llm_algorithm_engineer", "type": "job", "label": "大模型算法工程师"},
+      {"id": "skill:PyTorch", "type": "skill", "label": "PyTorch"},
+      {"id": "skill:深度学习", "type": "skill", "label": "深度学习"},
+      {"id": "skill:NLP", "type": "skill", "label": "NLP"},
+      {"id": "skill:模型微调", "type": "skill", "label": "模型微调"},
+      {"id": "scenario:智能对话", "type": "scenario", "label": "智能对话"}
+    ],
+    "edges": [
+      {"source": "job:llm_algorithm_engineer", "target": "skill:PyTorch", "relation": "required"},
+      {"source": "job:llm_algorithm_engineer", "target": "skill:深度学习", "relation": "required"},
+      {"source": "job:llm_algorithm_engineer", "target": "skill:NLP", "relation": "required"},
+      {"source": "job:llm_algorithm_engineer", "target": "skill:模型微调", "relation": "required"},
+      {"source": "job:llm_algorithm_engineer", "target": "scenario:智能对话", "relation": "applies_to"}
+    ]
+  },
+  "frontend_engineer_update": {
+    "job": "前端开发工程师",
+    "baseline_batch": "2023Q4",
+    "current_batch": "2026Q1",
+    "expected_added": ["TypeScript", "Next.js", "前端工程化", "性能调优"],
+    "interpretation": "前端岗位从传统 JavaScript 页面开发扩展到 TypeScript、组件化、SSR 和工程化体系。"
   }
 }

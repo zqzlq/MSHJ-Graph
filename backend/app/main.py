@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,7 +13,13 @@ from app.services.parser import parse_resume
 from app.services.repository import get_job, list_jd_records, list_jobs, list_resumes
 
 
-app = FastAPI(title="岗位能力图谱 MVP", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(title="岗位能力图谱 MVP", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,11 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-def startup() -> None:
-    init_db()
 
 
 @app.get("/health")

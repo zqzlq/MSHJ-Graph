@@ -260,18 +260,20 @@ function App() {
       return acc;
     }, {});
     const positions: Record<string, { x: number; y: number }> = {};
+    const maxGroupSize = Math.max(...Object.values(grouped).map(g => g.length), 1);
+    const canvasHeight = Math.max(620, maxGroupSize * 28 + 100);
 
     Object.entries(grouped).forEach(([type, group]) => {
       const x = columns[type] ?? 500;
-      const gap = Math.min(86, Math.max(46, 500 / Math.max(group.length, 1)));
-      const startY = 75 + Math.max(0, (500 - gap * (group.length - 1)) / 2);
+      const gap = Math.min(48, Math.max(20, (canvasHeight - 100) / Math.max(group.length, 1)));
+      const startY = 40 + Math.max(0, ((canvasHeight - 80) - gap * (group.length - 1)) / 2);
       group.forEach((node, index) => {
-        const offset = type === 'skill' ? (index % 2 === 0 ? -18 : 18) : 0;
+        const offset = type === 'skill' ? (index % 2 === 0 ? -14 : 14) : 0;
         positions[node.id] = { x: x + offset, y: startY + index * gap };
       });
     });
 
-    return { nodes, edges, positions };
+    return { nodes, edges, positions, canvasHeight };
   }, [filteredNodes, graph, graphFilter]);
 
   const selectedNode = graph?.nodes.find((node) => node.id === selectedNodeId) ?? null;
@@ -441,7 +443,7 @@ function App() {
               ))}
             </div>
             <div className="graph-canvas">
-              <svg className="knowledge-graph" viewBox="0 0 980 620" role="img" aria-label="岗位能力知识图谱">
+              <svg className="knowledge-graph" viewBox={`0 0 980 ${visibleGraph.canvasHeight}`} role="img" aria-label="岗位能力知识图谱">
                 <defs>
                   <marker id="arrow" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="3">
                     <path d="M0,0 L0,6 L9,3 z" />
