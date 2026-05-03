@@ -579,7 +579,7 @@ p {
   fill: #a7b4ca;
 }
 
-.graph-edge line {
+.graph-edge path {
   stroke: #a7b4ca;
   stroke-dasharray: 0;
   stroke-linecap: round;
@@ -597,25 +597,25 @@ p {
   stroke-width: 5px;
 }
 
-.graph-edge.required line {
+.graph-edge.required path {
   stroke: #16a34a;
   stroke-width: 2.3;
 }
 
-.graph-edge.bonus line {
+.graph-edge.bonus path {
   stroke: #7c3aed;
   stroke-dasharray: 8 6;
 }
 
-.graph-edge.belongs_to line {
+.graph-edge.belongs_to path {
   stroke: #2f6df6;
 }
 
-.graph-edge.applies_to line {
+.graph-edge.applies_to path {
   stroke: #f59e0b;
 }
 
-.graph-edge.active line {
+.graph-edge.active path {
   stroke: #ef4444;
   stroke-width: 3.3;
 }

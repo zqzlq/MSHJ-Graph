@@ -235,22 +235,15 @@ function EmptyState({ text }: { text: string }) {
   return <div className="empty">{text}</div>;
 }
 
-type ForceNode = GraphNode & { x: number; y: number; vx: number; vy: number };
-
-function useForceSimulation(graph: GraphData | null, graphFilter: string) {
-  const nodesRef = React.useRef<ForceNode[]>([]);
-  const edgesRef = React.useRef<GraphEdge[]>([]);
-  const iterRef = React.useRef(0);
-  const rafRef = React.useRef(0);
-  const [version, setVersion] = React.useState(0);
-
+function useGraphLayout(graph: GraphData | null, graphFilter: string) {
   const filteredNodes = React.useMemo(() => {
     if (!graph) return [];
     return graphFilter === 'all' ? graph.nodes : graph.nodes.filter((n) => n.type === graphFilter);
   }, [graph?.nodes, graphFilter]);
 
-  const { nodes, edges } = React.useMemo(() => {
-    if (!graph) return { nodes: [] as GraphNode[], edges: [] as GraphEdge[] };
+  return React.useMemo(() => {
+    if (!graph) return { nodes: [] as GraphNode[], edges: [] as GraphEdge[], positions: {} as Record<string, { x: number; y: number }> };
+
     const ids = new Set(filteredNodes.map((n) => n.id));
     graph.edges.forEach((e) => {
       if (ids.has(e.source) || ids.has(e.target)) {
@@ -258,141 +251,29 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
         ids.add(e.target);
       }
     });
-    return {
-      nodes: graph.nodes.filter((n) => ids.has(n.id)),
-      edges: graph.edges.filter((e) => ids.has(e.source) && ids.has(e.target)),
-    };
+
+    const nodes = graph.nodes.filter((n) => ids.has(n.id));
+    const edges = graph.edges.filter((e) => ids.has(e.source) && ids.has(e.target));
+
+    const W = 1100, H = 700;
+    const columnX: Record<string, number> = { job: 120, skill: 420, skill_category: 720, scenario: 960 };
+    const grouped: Record<string, GraphNode[]> = {};
+    for (const n of nodes) {
+      (grouped[n.type] ??= []).push(n);
+    }
+
+    const positions: Record<string, { x: number; y: number }> = {};
+    for (const [type, group] of Object.entries(grouped)) {
+      const x = columnX[type] ?? W / 2;
+      const gap = Math.min(52, (H - 60) / Math.max(group.length, 1));
+      const startY = (H - gap * (group.length - 1)) / 2;
+      group.forEach((n, i) => {
+        positions[n.id] = { x, y: startY + i * gap };
+      });
+    }
+
+    return { nodes, edges, positions };
   }, [filteredNodes, graph]);
-
-  const graphRef = React.useRef({ nodes, edges });
-  graphRef.current = { nodes, edges };
-
-  React.useEffect(() => {
-    const { nodes: gNodes, edges: gEdges } = graphRef.current;
-    const nodeMap = new Map(nodesRef.current.map((n) => [n.id, n]));
-    const oldIds = new Set(nodeMap.keys());
-    const changed = gNodes.length !== oldIds.size || gNodes.some((n) => !oldIds.has(n.id));
-
-    if (changed) {
-      const N = gNodes.length;
-      const W = Math.max(1600, Math.ceil(Math.sqrt(N * 12000)));
-      const H = Math.max(1000, Math.ceil(W * 0.65));
-      const columns: Record<string, number> = { job: 0.12, skill: 0.4, skill_category: 0.7, scenario: 0.9 };
-      const grouped: Record<string, typeof gNodes> = {};
-      for (const n of gNodes) {
-        (grouped[n.type] ??= []).push(n);
-      }
-      const newNodes: ForceNode[] = [];
-      for (const [type, group] of Object.entries(grouped)) {
-        const x = (columns[type] ?? 0.5) * W;
-        const gap = Math.max(50, (H - 100) / Math.max(group.length, 1));
-        const startY = (H - gap * (group.length - 1)) / 2;
-        for (let i = 0; i < group.length; i++) {
-          const existing = nodeMap.get(group[i].id);
-          if (existing) {
-            newNodes.push(existing);
-          } else {
-            newNodes.push({
-              ...group[i],
-              x: x + (Math.random() - 0.5) * 40,
-              y: startY + i * gap + (Math.random() - 0.5) * 20,
-              vx: 0,
-              vy: 0,
-            });
-          }
-        }
-      }
-      nodesRef.current = newNodes;
-      edgesRef.current = gEdges;
-      iterRef.current = 0;
-    }
-
-    if (nodesRef.current.length === 0) return;
-    let active = true;
-
-    function step() {
-      if (!active || iterRef.current >= 300) return;
-      const ns = nodesRef.current;
-      const es = edgesRef.current;
-      const N = ns.length;
-      const W = Math.max(1600, Math.ceil(Math.sqrt(N * 12000)));
-      const H = Math.max(1000, Math.ceil(W * 0.65));
-      const CX = W / 2, CY = H / 2;
-      const repulsion = 80000 + N * 600;
-      const damping = 0.78;
-      const maxV = 50;
-      const minDist = 80;
-
-      for (let i = 0; i < N; i++) {
-        let fx = 0, fy = 0;
-        for (let j = 0; j < N; j++) {
-          if (i === j) continue;
-          const dx = ns[i].x - ns[j].x;
-          const dy = ns[i].y - ns[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const f = repulsion / (dist * dist + 100);
-          fx += (dx / dist) * f;
-          fy += (dy / dist) * f;
-          if (dist < minDist) {
-            const push = (minDist - dist) * 1.2;
-            fx += (dx / dist) * push;
-            fy += (dy / dist) * push;
-          }
-        }
-        ns[i].vx = (ns[i].vx + fx) * damping;
-        ns[i].vy = (ns[i].vy + fy) * damping;
-      }
-
-      const nodeIndex = new Map(ns.map((n, i) => [n.id, i]));
-      for (const edge of es) {
-        const si = nodeIndex.get(edge.source);
-        const ti = nodeIndex.get(edge.target);
-        if (si === undefined || ti === undefined) continue;
-        const dx = ns[ti].x - ns[si].x;
-        const dy = ns[ti].y - ns[si].y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const targetDist = 180;
-        const force = (dist - targetDist) * 0.004;
-        const fx = (dx / dist) * force;
-        const fy = (dy / dist) * force;
-        ns[si].vx += fx;
-        ns[si].vy += fy;
-        ns[ti].vx -= fx;
-        ns[ti].vy -= fy;
-      }
-
-      for (const node of ns) {
-        node.vx += (CX - node.x) * 0.0005;
-        node.vy += (CY - node.y) * 0.0005;
-        node.vx = Math.max(-maxV, Math.min(maxV, node.vx));
-        node.vy = Math.max(-maxV, Math.min(maxV, node.vy));
-        node.x += node.vx;
-        node.y += node.vy;
-        node.x = Math.max(50, Math.min(W - 50, node.x));
-        node.y = Math.max(50, Math.min(H - 50, node.y));
-      }
-
-      iterRef.current++;
-      setVersion((v) => v + 1);
-      rafRef.current = requestAnimationFrame(step);
-    }
-
-    rafRef.current = requestAnimationFrame(step);
-    return () => {
-      active = false;
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, [nodes, edges]);
-
-  const positions = React.useMemo(() => {
-    const pos: Record<string, { x: number; y: number }> = {};
-    for (const n of nodesRef.current) {
-      pos[n.id] = { x: n.x, y: n.y };
-    }
-    return pos;
-  }, [version]);
-
-  return { nodes, edges, positions, nodesRef };
 }
 
 function GraphCanvas({
@@ -401,33 +282,28 @@ function GraphCanvas({
   positions,
   selectedNodeId,
   onSelectNode,
-  nodesRef,
 }: {
   nodes: GraphNode[];
   edges: GraphEdge[];
   positions: Record<string, { x: number; y: number }>;
   selectedNodeId: string | null;
   onSelectNode: (id: string) => void;
-  nodesRef: React.RefObject<ForceNode[]>;
 }) {
-  const N = nodes.length;
-  const W = Math.max(1600, Math.ceil(Math.sqrt(N * 12000)));
-  const H = Math.max(1000, Math.ceil(W * 0.65));
+  const W = 1100, H = 700;
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [viewBox, setViewBox] = React.useState({ x: -100, y: -100, w: W + 200, h: H + 200 });
+  const [viewBox, setViewBox] = React.useState({ x: -40, y: -40, w: W + 80, h: H + 80 });
   const [search, setSearch] = React.useState('');
-  const [dragging, setDragging] = React.useState<{ nodeId: string; offsetX: number; offsetY: number } | null>(null);
-  const [isPanning, setIsPanning] = React.useState(false);
-  const panStartRef = React.useRef({ x: 0, y: 0, vx: 0, vy: 0 });
 
-  const filteredEdges = edges.filter((e) => {
-    const s = positions[e.source], t = positions[e.target];
-    return s && t;
-  });
+  const edgeSet = React.useMemo(() => {
+    const s = new Set<string>();
+    edges.forEach((e) => s.add(`${e.source}->${e.target}`));
+    return s;
+  }, [edges]);
 
-  React.useEffect(() => {
-    setViewBox({ x: -100, y: -100, w: W + 200, h: H + 200 });
-  }, [W, H]);
+  const relatedEdgeKeys = React.useMemo(() => {
+    if (!selectedNodeId) return new Set<string>();
+    return new Set(edges.filter((e) => e.source === selectedNodeId || e.target === selectedNodeId).map((e) => `${e.source}->${e.target}`));
+  }, [edges, selectedNodeId]);
 
   const searchLower = search.toLowerCase();
   const searchMatchIds = React.useMemo(() => {
@@ -435,20 +311,15 @@ function GraphCanvas({
     return new Set(nodes.filter((n) => n.label.toLowerCase().includes(searchLower)).map((n) => n.id));
   }, [nodes, searchLower]);
 
-  const relatedEdgeIds = React.useMemo(() => {
-    if (!selectedNodeId) return new Set<string>();
-    return new Set(edges.filter((e) => e.source === selectedNodeId || e.target === selectedNodeId).map((e) => `${e.source}-${e.target}`));
-  }, [edges, selectedNodeId]);
-
   React.useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const factor = e.deltaY > 0 ? 1.12 : 0.89;
+      const factor = e.deltaY > 0 ? 1.1 : 0.91;
       setViewBox((vb) => {
-        const newW = Math.max(200, Math.min(W * 3, vb.w * factor));
-        const newH = Math.max(130, Math.min(H * 3, vb.h * factor));
+        const newW = Math.max(300, Math.min(W * 2.5, vb.w * factor));
+        const newH = Math.max(200, Math.min(H * 2.5, vb.h * factor));
         const rect = el.getBoundingClientRect();
         const mx = ((e.clientX - rect.left) / rect.width) * vb.w + vb.x;
         const my = ((e.clientY - rect.top) / rect.height) * vb.h + vb.y;
@@ -459,70 +330,38 @@ function GraphCanvas({
     return () => el.removeEventListener('wheel', onWheel);
   }, []);
 
-  const handleCanvasMouseDown = (e: React.MouseEvent) => {
-    if (dragging) return;
-    setIsPanning(true);
-    panStartRef.current = { x: e.clientX, y: e.clientY, vx: viewBox.x, vy: viewBox.y };
-  };
-
   React.useEffect(() => {
-    if (!isPanning) return;
     const el = containerRef.current;
     if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const scaleX = viewBox.w / rect.width;
-    const scaleY = viewBox.h / rect.height;
-    const onMove = (e: MouseEvent) => {
-      setViewBox((vb) => ({
-        ...vb,
-        x: panStartRef.current.vx - (e.clientX - panStartRef.current.x) * scaleX,
-        y: panStartRef.current.vy - (e.clientY - panStartRef.current.y) * scaleY,
-      }));
+    let panning = false;
+    let startX = 0, startY = 0, startVx = 0, startVy = 0;
+    const onMouseDown = (e: MouseEvent) => {
+      if ((e.target as Element).closest('.kg-node')) return;
+      panning = true;
+      startX = e.clientX; startY = e.clientY;
+      const vb = viewBoxRef.current;
+      startVx = vb.x; startVy = vb.y;
     };
-    const onUp = () => setIsPanning(false);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-  }, [isPanning, viewBox.w, viewBox.h]);
-
-  const toSvg = (clientX: number, clientY: number) => {
-    const el = containerRef.current!;
-    const rect = el.getBoundingClientRect();
-    return {
-      x: ((clientX - rect.left) / rect.width) * viewBox.w + viewBox.x,
-      y: ((clientY - rect.top) / rect.height) * viewBox.h + viewBox.y,
+    const onMouseMove = (e: MouseEvent) => {
+      if (!panning) return;
+      const rect = el.getBoundingClientRect();
+      const vb = viewBoxRef.current;
+      const scaleX = vb.w / rect.width;
+      const scaleY = vb.h / rect.height;
+      setViewBox({ ...vb, x: startVx - (e.clientX - startX) * scaleX, y: startVy - (e.clientY - startY) * scaleY });
     };
-  };
+    const onMouseUp = () => { panning = false; };
+    el.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => { el.removeEventListener('mousedown', onMouseDown); window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); };
+  }, []);
 
-  const handleNodeMouseDown = (e: React.MouseEvent, nodeId: string) => {
-    e.stopPropagation();
-    onSelectNode(nodeId);
-    const svg = toSvg(e.clientX, e.clientY);
-    const pos = positions[nodeId];
-    if (!pos) return;
-    setDragging({ nodeId, offsetX: svg.x - pos.x, offsetY: svg.y - pos.y });
-  };
-
-  React.useEffect(() => {
-    if (!dragging) return;
-    const onMove = (e: MouseEvent) => {
-      const svg = toSvg(e.clientX, e.clientY);
-      const node = nodesRef.current?.find((n: ForceNode) => n.id === dragging.nodeId);
-      if (node) {
-        node.x = svg.x - dragging.offsetX;
-        node.y = svg.y - dragging.offsetY;
-        node.vx = 0;
-        node.vy = 0;
-      }
-    };
-    const onUp = () => setDragging(null);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-  }, [dragging]);
+  const viewBoxRef = React.useRef(viewBox);
+  viewBoxRef.current = viewBox;
 
   const centerOn = (x: number, y: number) => {
-    setViewBox({ x: x - W / 2, y: y - H / 2, w: W, h: H });
+    setViewBox({ x: x - 400, y: y - 300, w: 800, h: 600 });
   };
 
   const handleSearchSelect = (nodeId: string) => {
@@ -552,12 +391,7 @@ function GraphCanvas({
           </div>
         )}
       </div>
-      <div
-        ref={containerRef}
-        className="graph-canvas"
-        onMouseDown={handleCanvasMouseDown}
-        style={{ cursor: isPanning ? 'grabbing' : dragging ? 'grabbing' : 'default' }}
-      >
+      <div ref={containerRef} className="graph-canvas" style={{ cursor: 'grab' }}>
         <svg
           className="knowledge-graph"
           viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
@@ -565,18 +399,27 @@ function GraphCanvas({
           aria-label="岗位能力知识图谱"
         >
           <defs>
-            <marker id="arrow" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="3">
-              <path d="M0,0 L0,6 L9,3 z" />
+            <marker id="arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="3">
+              <path d="M0,0 L0,6 L7,3 z" fill="#a7b4ca" />
             </marker>
           </defs>
-          {filteredEdges.map((edge) => {
-            const s = positions[edge.source]!;
-            const t = positions[edge.target]!;
-            const isRelated = relatedEdgeIds.has(`${edge.source}-${edge.target}`);
+          {edges.map((edge) => {
+            const s = positions[edge.source];
+            const t = positions[edge.target];
+            if (!s || !t) return null;
+            const key = `${edge.source}->${edge.target}`;
+            const isRelated = relatedEdgeKeys.has(key);
+            const mx = (s.x + t.x) / 2;
+            const cp = mx + (t.x > s.x ? 40 : -40);
             return (
-              <g key={`${edge.source}-${edge.target}`} className={`graph-edge ${edge.relation} ${isRelated ? 'active' : ''}`}>
-                <line x1={s.x} y1={s.y} x2={t.x} y2={t.y} markerEnd="url(#arrow)" />
-                <text x={(s.x + t.x) / 2} y={(s.y + t.y) / 2 - 6}>{edge.relation}</text>
+              <g key={key} className={`graph-edge ${edge.relation} ${isRelated ? 'active' : ''}`}>
+                <path
+                  d={`M${s.x},${s.y} Q${cp},${(s.y + t.y) / 2} ${t.x},${t.y}`}
+                  fill="none"
+                  markerEnd="url(#arrow)"
+                  style={{ stroke: 'inherit', strokeWidth: 'inherit' }}
+                />
+                <text x={cp} y={(s.y + t.y) / 2 - 8} textAnchor="middle">{edge.relation}</text>
               </g>
             );
           })}
@@ -584,23 +427,23 @@ function GraphCanvas({
             const pos = positions[node.id];
             if (!pos) return null;
             const isSelected = selectedNodeId === node.id;
-            const isRelated = relatedEdgeIds.size > 0 && edges.some((e) => (e.source === selectedNodeId && e.target === node.id) || (e.target === selectedNodeId && e.source === node.id));
+            const isRelated = relatedEdgeKeys.size > 0 && edges.some((e) => (e.source === selectedNodeId && e.target === node.id) || (e.target === selectedNodeId && e.source === node.id));
             const isSearchMatch = searchMatchIds.has(node.id);
             return (
               <g
                 key={node.id}
                 className={`kg-node ${node.type} ${isSelected ? 'selected' : ''} ${isRelated ? 'related' : ''}`}
-                onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                style={{ cursor: 'grab' }}
+                onClick={() => onSelectNode(node.id)}
+                style={{ cursor: 'pointer' }}
               >
                 <circle
                   cx={pos.x}
                   cy={pos.y}
-                  r={node.type === 'job' ? 28 : 20}
+                  r={node.type === 'job' ? 30 : 22}
                   stroke={isSearchMatch ? '#ef4444' : undefined}
                   strokeWidth={isSearchMatch ? 4 : undefined}
                 />
-                <text x={pos.x} y={pos.y + 4} fontSize="10">{node.label.length > 8 ? `${node.label.slice(0, 7)}…` : node.label}</text>
+                <text x={pos.x} y={pos.y + 4}>{node.label.length > 9 ? `${node.label.slice(0, 8)}…` : node.label}</text>
                 <title>{node.label}</title>
               </g>
             );
@@ -739,10 +582,10 @@ function App() {
     }
   }, [selectedJob, selectedResume?.id]);
 
-  const { nodes: forceNodes, edges: forceEdges, positions, nodesRef } = useForceSimulation(graph, graphFilter);
+  const { nodes: layoutNodes, edges: layoutEdges, positions } = useGraphLayout(graph, graphFilter);
 
-  const selectedNode = forceNodes.find((node) => node.id === selectedNodeId) ?? null;
-  const relatedEdges = forceEdges.filter((edge) => edge.source === selectedNodeId || edge.target === selectedNodeId);
+  const selectedNode = layoutNodes.find((node) => node.id === selectedNodeId) ?? null;
+  const relatedEdges = layoutEdges.filter((edge) => edge.source === selectedNodeId || edge.target === selectedNodeId);
   const nodeTypeCounts = React.useMemo(() => {
     return (graph?.nodes ?? []).reduce<Record<string, number>>((acc, node) => {
       acc[node.type] = (acc[node.type] ?? 0) + 1;
@@ -918,12 +761,11 @@ function App() {
                   ))}
                 </div>
                 <GraphCanvas
-                  nodes={forceNodes}
-                  edges={forceEdges}
+                  nodes={layoutNodes}
+                  edges={layoutEdges}
                   positions={positions}
                   selectedNodeId={selectedNodeId}
                   onSelectNode={setSelectedNodeId}
-                  nodesRef={nodesRef}
                 />
               </>
             ) : null}
@@ -992,11 +834,11 @@ function App() {
             <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
               <select value={pathSource} onChange={(e) => setPathSource(e.target.value)} style={{ flex: 1 }}>
                 <option value="">起点节点</option>
-                {forceNodes.map((n) => <option key={n.id} value={n.id}>{n.label}</option>)}
+                {layoutNodes.map((n) => <option key={n.id} value={n.id}>{n.label}</option>)}
               </select>
               <select value={pathTarget} onChange={(e) => setPathTarget(e.target.value)} style={{ flex: 1 }}>
                 <option value="">终点节点</option>
-                {forceNodes.map((n) => <option key={n.id} value={n.id}>{n.label}</option>)}
+                {layoutNodes.map((n) => <option key={n.id} value={n.id}>{n.label}</option>)}
               </select>
             </div>
             <button className="secondary" onClick={runPathQuery} style={{ width: '100%' }}>
