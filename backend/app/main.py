@@ -9,6 +9,7 @@ from app.database import init_db
 from app.schemas import MatchRequest, ResumeParseRequest
 from app.config import LLM_ENABLED, LLM_MODEL
 from app.services.analysis import analyze_job_updates, discover_emerging_jobs, match_resume_to_job
+from app.services.clustering import run_clustering
 from app.services.evaluation import run_full_evaluation
 from app.services.graph import build_capability_graph
 from app.services.parser import parse_resume
@@ -109,3 +110,8 @@ def match(payload: MatchRequest) -> dict:
 @app.get("/api/evaluation")
 def evaluation() -> dict:
     return run_full_evaluation()
+
+
+@app.get("/api/clustering")
+def clustering(n_clusters: int = 3) -> dict:
+    return run_clustering(n_clusters)

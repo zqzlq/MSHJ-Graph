@@ -892,6 +892,48 @@ textarea {
   }
 }
 
+.cluster-view {
+  display: grid;
+  gap: 16px;
+}
+
+.cluster-canvas {
+  background:
+    radial-gradient(circle at center, rgba(47, 109, 246, 0.04), transparent 60%);
+  border: 1px dashed #cad6ea;
+  border-radius: 18px;
+  display: block;
+  min-height: 400px;
+  width: 100%;
+}
+
+.cluster-node {
+  cursor: pointer;
+}
+
+.cluster-node:hover circle {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  r: 0.45;
+}
+
+.cluster-info {
+  display: grid;
+  gap: 10px;
+}
+
+.cluster-card {
+  background: #f7f9fd;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.cluster-header {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .eval-list {
   display: grid;
   gap: 8px;

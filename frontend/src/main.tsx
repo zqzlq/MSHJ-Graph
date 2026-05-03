@@ -167,6 +167,27 @@ type EvaluationData = {
   };
 };
 
+type ClusterJob = {
+  id: string;
+  title: string;
+  category: string;
+  coords: { x: number; y: number };
+};
+
+type Cluster = {
+  id: number;
+  jobs: ClusterJob[];
+  center: { x: number; y: number };
+  top_skills: Array<{ name: string; count: number }>;
+};
+
+type ClusteringData = {
+  n_clusters: number;
+  n_jobs: number;
+  clusters: Cluster[];
+  similarity_edges: Array<{ source: string; target: string; similarity: number }>;
+};
+
 type ModuleKey = 'overview' | 'graph' | 'evolution' | 'matching' | 'evaluation';
 
 const modules: Array<{ key: ModuleKey; label: string; icon: React.ReactNode }> = [
@@ -225,6 +246,8 @@ function App() {
   const [matchResult, setMatchResult] = React.useState<MatchResult | null>(null);
   const [parsedResume, setParsedResume] = React.useState<ParsedResume | null>(null);
   const [evaluation, setEvaluation] = React.useState<EvaluationData | null>(null);
+  const [clustering, setClustering] = React.useState<ClusteringData | null>(null);
+  const [graphView, setGraphView] = React.useState<'topology' | 'cluster'>('topology');
   const [activeModule, setActiveModule] = React.useState<ModuleKey>('overview');
   const [graphFilter, setGraphFilter] = React.useState('all');
   const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
@@ -236,12 +259,13 @@ function App() {
     setError('');
     try {
       await fetch(`${API_BASE}/api/init`, { method: 'POST' });
-      const [dashboardRes, graphRes, discoverRes, resumesRes, evalRes] = await Promise.all([
+      const [dashboardRes, graphRes, discoverRes, resumesRes, evalRes, clusterRes] = await Promise.all([
         fetch(`${API_BASE}/api/dashboard`),
         fetch(`${API_BASE}/api/graph`),
         fetch(`${API_BASE}/api/discover`),
         fetch(`${API_BASE}/api/resumes`),
-        fetch(`${API_BASE}/api/evaluation`)
+        fetch(`${API_BASE}/api/evaluation`),
+        fetch(`${API_BASE}/api/clustering`)
       ]);
       const dashboardData: Dashboard = await dashboardRes.json();
       const graphData: GraphData = await graphRes.json();
@@ -260,6 +284,9 @@ function App() {
       try {
         if (evalRes.ok) setEvaluation(await evalRes.json());
       } catch { /* evaluation API not available */ }
+      try {
+        if (clusterRes.ok) setClustering(await clusterRes.json());
+      } catch { /* clustering API not available */ }
     } catch {
       setError('无法连接后端服务，请先启动 FastAPI：uvicorn app.main:app --reload');
     } finally {
@@ -505,6 +532,16 @@ function App() {
         <div className="grid graph-layout">
           <Card title="图谱探索器" subtitle="按节点类型筛选，并点击节点查看相邻关系" icon={<Network />} accent>
             <div className="filter-bar">
+              <button className={graphView === 'topology' ? 'active' : ''} onClick={() => setGraphView('topology')}>
+                <Network size={14} /> 拓扑视图
+              </button>
+              <button className={graphView === 'cluster' ? 'active' : ''} onClick={() => setGraphView('cluster')}>
+                <Layers3 size={14} /> 聚类视图
+              </button>
+            </div>
+            {graphView === 'topology' ? (
+            <>
+            <div className="filter-bar">
               {[
                 ['all', '全部', graph?.nodes.length ?? 0],
                 ['job', '岗位', nodeTypeCounts.job ?? 0],
@@ -568,6 +605,47 @@ function App() {
                 <span><i className="legend-category" />技能类别</span>
                 <span><i className="legend-scenario" />行业场景</span>
               </div>
+            </>
+            ) : null}
+            {graphView === 'cluster' && clustering ? (
+              <div className="cluster-view">
+                <svg className="cluster-canvas" viewBox="-6 -6 12 12" role="img" aria-label="岗位聚类散点图">
+                  <line x1="-5" y1="0" x2="5" y2="0" stroke="#e5ebf5" strokeWidth="0.02" />
+                  <line x1="0" y1="-5" x2="0" y2="5" stroke="#e5ebf5" strokeWidth="0.02" />
+                  {clustering.clusters.map((cluster) => {
+                    const colors = ['#2f6df6', '#16a34a', '#f59e0b', '#dc2626', '#7c3aed'];
+                    const color = colors[cluster.id % colors.length];
+                    return cluster.jobs.map((job) => (
+                      <g key={job.id} className="cluster-node" onClick={() => { setSelectedJob(job.id); setGraphView('topology'); }}>
+                        <circle cx={job.coords.x} cy={-job.coords.y} r={0.35} fill={color} opacity={0.85} stroke="white" strokeWidth={0.06} />
+                        <text x={job.coords.x} y={-job.coords.y + 0.55} textAnchor="middle" fontSize="0.3" fill="#162033" fontWeight="700">
+                          {job.title.length > 6 ? job.title.slice(0, 5) + '..' : job.title}
+                        </text>
+                      </g>
+                    ));
+                  })}
+                </svg>
+                <div className="cluster-info">
+                  {clustering.clusters.map((cluster) => {
+                    const colors = ['#2f6df6', '#16a34a', '#f59e0b', '#dc2626', '#7c3aed'];
+                    const color = colors[cluster.id % colors.length];
+                    return (
+                      <div key={cluster.id} className="cluster-card">
+                        <div className="cluster-header">
+                          <i style={{ background: color, width: 12, height: 12, borderRadius: '50%', display: 'inline-block' }} />
+                          <b>类别 {cluster.id + 1}</b>
+                          <span>{cluster.jobs.length} 个岗位</span>
+                        </div>
+                        <div className="skill-row">
+                          {cluster.top_skills.map((s) => <Pill key={s.name} tone="green">{s.name} ({s.count})</Pill>)}
+                        </div>
+                        <div className="muted">{cluster.jobs.map((j) => j.title).join('、')}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
             </div>
           </Card>
 
