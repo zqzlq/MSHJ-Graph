@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db
 from app.schemas import MatchRequest, ResumeParseRequest
+from app.config import LLM_ENABLED, LLM_MODEL
 from app.services.analysis import analyze_job_updates, discover_emerging_jobs, match_resume_to_job
 from app.services.evaluation import run_full_evaluation
 from app.services.graph import build_capability_graph
@@ -33,7 +34,7 @@ app.add_middleware(
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok"}
+    return {"status": "ok", "llm_enabled": LLM_ENABLED, "llm_model": LLM_MODEL if LLM_ENABLED else None}
 
 
 @app.post("/api/init")

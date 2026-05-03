@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 
 from app.services.analysis import discover_emerging_jobs, match_resume_to_job
-from app.services.parser import extract_skills, parse_jd, parse_resume
+from app.config import LLM_ENABLED
+from app.services.parser import extract_skills, extract_skills_dual, parse_jd, parse_resume
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 
@@ -152,7 +153,7 @@ def run_full_evaluation() -> dict:
     matching = evaluate_matching()
     discovery = evaluate_discovery()
 
-    return {
+    result = {
         "summary": {
             "skill_extraction_f1": extraction["micro_avg"]["f1"],
             "skill_extraction_precision": extraction["micro_avg"]["precision"],
@@ -161,8 +162,53 @@ def run_full_evaluation() -> dict:
             "matching_passed": f"{matching['passed']}/{matching['total_cases']}",
             "discovery_count": discovery["total_discoveries"],
             "high_confidence_discoveries": discovery["high_confidence_count"],
+            "llm_enabled": LLM_ENABLED,
         },
         "skill_extraction": extraction,
         "matching": matching,
         "discovery": discovery,
+        "llm_comparison": evaluate_llm_comparison() if LLM_ENABLED else None,
+    }
+    return result
+
+
+def evaluate_llm_comparison() -> dict | None:
+    if not LLM_ENABLED:
+        return None
+
+    cases = _load_test_cases()
+    all_cases = cases["jd_parse_cases"] + cases["resume_parse_cases"]
+    rule_results = []
+    llm_results = []
+
+    for case in all_cases:
+        text = case["input"]
+        is_jd = case["id"].startswith("case_jd_")
+        expected = set(case["expected_skills"])
+
+        rule_skills = extract_skills(text)
+        rule_predicted = {s["name"] for s in rule_skills}
+        rule_metrics = _prf(expected, rule_predicted)
+
+        llm_skills, llm_used = extract_skills_dual(text, "jd" if is_jd else "resume")
+        llm_predicted = {s["name"] for s in llm_skills}
+        llm_metrics = _prf(expected, llm_predicted)
+
+        rule_results.append(rule_metrics)
+        llm_results.append(llm_metrics)
+
+    def avg_metric(results, key):
+        return round(sum(r[key] for r in results) / len(results), 4) if results else 0
+
+    return {
+        "rule_based": {
+            "precision": avg_metric(rule_results, "precision"),
+            "recall": avg_metric(rule_results, "recall"),
+            "f1": avg_metric(rule_results, "f1"),
+        },
+        "llm_enhanced": {
+            "precision": avg_metric(llm_results, "precision"),
+            "recall": avg_metric(llm_results, "recall"),
+            "f1": avg_metric(llm_results, "f1"),
+        },
     }
