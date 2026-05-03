@@ -606,6 +606,9 @@ function App() {
   const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
+  const [pathSource, setPathSource] = React.useState('');
+  const [pathTarget, setPathTarget] = React.useState('');
+  const [pathResult, setPathResult] = React.useState<{ path: Array<{ id: string; label: string; type: string }>; edges: Array<{ source: string; target: string; relation: string }>; length?: number; error?: string } | null>(null);
 
   async function loadData() {
     setLoading(true);
@@ -665,6 +668,12 @@ function App() {
     const result = await response.json();
     setMatchResult(result);
     setParsedResume(result.parsed_resume);
+  }
+
+  async function runPathQuery() {
+    if (!pathSource || !pathTarget) return;
+    const res = await fetch(`${API_BASE}/api/graph/path?source=${encodeURIComponent(pathSource)}&target=${encodeURIComponent(pathTarget)}`);
+    setPathResult(await res.json());
   }
 
   React.useEffect(() => {
@@ -931,6 +940,44 @@ function App() {
                 }) : <EmptyState text="该筛选下暂无相邻关系" />}
               </div>
             ) : <EmptyState text="请选择一个图谱节点" />}
+            <h4 style={{ marginTop: 20 }}>路径查询</h4>
+            <p className="muted" style={{ marginBottom: 10 }}>选择起止节点，查询图谱中最短路径</p>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+              <select value={pathSource} onChange={(e) => setPathSource(e.target.value)} style={{ flex: 1 }}>
+                <option value="">起点节点</option>
+                {forceNodes.map((n) => <option key={n.id} value={n.id}>{n.label}</option>)}
+              </select>
+              <select value={pathTarget} onChange={(e) => setPathTarget(e.target.value)} style={{ flex: 1 }}>
+                <option value="">终点节点</option>
+                {forceNodes.map((n) => <option key={n.id} value={n.id}>{n.label}</option>)}
+              </select>
+            </div>
+            <button className="secondary" onClick={runPathQuery} style={{ width: '100%' }}>
+              <Route size={14} /> 查询路径
+            </button>
+            {pathResult && (
+              <div style={{ marginTop: 12 }}>
+                {pathResult.error ? (
+                  <EmptyState text={pathResult.error} />
+                ) : (
+                  <>
+                    <p className="muted">路径长度：{pathResult.length} 跳</p>
+                    <div className="timeline" style={{ marginLeft: 0 }}>
+                      {pathResult.path.map((node, i) => (
+                        <div key={node.id} className="timeline-item" style={{ marginLeft: 0 }}>
+                          <div className="timeline-dot" />
+                          <div className="timeline-content">
+                            <Pill tone={node.type === 'job' ? 'gray' : node.type === 'skill' ? 'green' : node.type === 'skill_category' ? 'blue' : 'orange'}>{node.type}</Pill>
+                            <b>{node.label}</b>
+                            {pathResult.edges[i] && <span className="muted"> → {pathResult.edges[i].relation}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </Card>
         </div>
       ) : null}
@@ -989,6 +1036,30 @@ function App() {
             <select value={selectedJob} onChange={(event) => setSelectedJob(event.target.value)}>
               {jobs.map((job) => <option value={job.id} key={job.id}>{job.title}</option>)}
             </select>
+            <label>上传简历文件（PDF/TXT）</label>
+            <input
+              type="file"
+              accept=".pdf,.txt"
+              style={{ marginBottom: 14 }}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                  const res = await fetch(`${API_BASE}/api/upload/resume`, { method: 'POST', body: formData });
+                  const data = await res.json();
+                  if (data.error) {
+                    alert(data.error);
+                  } else {
+                    setResumeText(data.raw_text_length > 0 ? `（已上传 ${file.name}，解析到 ${data.skills.length} 项技能）\n\n` + (data.projects?.join('\n') ?? '') : '');
+                    setParsedResume(data);
+                  }
+                } catch {
+                  alert('上传失败，请检查后端服务');
+                }
+              }}
+            />
             <label>简历文本</label>
             <textarea value={resumeText} onChange={(event) => setResumeText(event.target.value)} />
             <div className="button-row">

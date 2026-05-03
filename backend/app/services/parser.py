@@ -112,3 +112,18 @@ def parse_resume(text: str, use_llm: bool = False) -> dict:
         "raw_text_length": len(text),
         "llm_used": llm_used,
     }
+
+
+def parse_pdf_resume(pdf_bytes: bytes) -> dict:
+    from io import BytesIO
+    from PyPDF2 import PdfReader
+
+    reader = PdfReader(BytesIO(pdf_bytes))
+    text = ""
+    for page in reader.pages:
+        page_text = page.extract_text()
+        if page_text:
+            text += page_text + "\n"
+    if not text.strip():
+        return {"error": "无法从 PDF 中提取文本", "skills": [], "projects": [], "years": None, "raw_text_length": 0, "llm_used": False}
+    return parse_resume(text)
