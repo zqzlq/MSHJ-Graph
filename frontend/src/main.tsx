@@ -614,7 +614,6 @@ function App() {
     setLoading(true);
     setError('');
     try {
-      await fetch(`${API_BASE}/api/init`, { method: 'POST' });
       const [dashboardRes, graphRes, discoverRes, resumesRes, evalRes, clusterRes] = await Promise.all([
         fetch(`${API_BASE}/api/dashboard`),
         fetch(`${API_BASE}/api/graph`),
