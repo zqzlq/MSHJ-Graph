@@ -255,18 +255,21 @@ function useGraphLayout(graph: GraphData | null, graphFilter: string) {
     const nodes = graph.nodes.filter((n) => ids.has(n.id));
     const edges = graph.edges.filter((e) => ids.has(e.source) && ids.has(e.target));
 
-    const W = 1100, H = 700;
-    const columnX: Record<string, number> = { job: 120, skill: 420, skill_category: 720, scenario: 960 };
+    const W = 1200;
+    const columnX: Record<string, number> = { job: 140, skill: 460, skill_category: 780, scenario: 1040 };
     const grouped: Record<string, GraphNode[]> = {};
     for (const n of nodes) {
       (grouped[n.type] ??= []).push(n);
     }
 
+    const maxCol = Math.max(...Object.values(grouped).map(g => g.length), 1);
+    const H = Math.max(800, maxCol * 54 + 80);
+
     const positions: Record<string, { x: number; y: number }> = {};
     for (const [type, group] of Object.entries(grouped)) {
       const x = columnX[type] ?? W / 2;
-      const gap = Math.min(52, (H - 60) / Math.max(group.length, 1));
-      const startY = (H - gap * (group.length - 1)) / 2;
+      const gap = (H - 60) / Math.max(group.length, 1);
+      const startY = 30 + gap / 2;
       group.forEach((n, i) => {
         positions[n.id] = { x, y: startY + i * gap };
       });
@@ -289,9 +292,15 @@ function GraphCanvas({
   selectedNodeId: string | null;
   onSelectNode: (id: string) => void;
 }) {
-  const W = 1100, H = 700;
+  const W = 1200;
+  const maxCol = nodes.length > 0 ? Math.max(...['job','skill','skill_category','scenario'].map(t => nodes.filter(n => n.type === t).length)) : 1;
+  const H = Math.max(800, maxCol * 54 + 80);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [viewBox, setViewBox] = React.useState({ x: -40, y: -40, w: W + 80, h: H + 80 });
+
+  React.useEffect(() => {
+    setViewBox({ x: -40, y: -40, w: W + 80, h: H + 80 });
+  }, [W, H]);
   const [search, setSearch] = React.useState('');
 
   const edgeSet = React.useMemo(() => {
