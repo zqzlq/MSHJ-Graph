@@ -622,7 +622,7 @@ function App() {
                       </div>
                     </div>
                     <div className="evidence-list">
-                      {update.sources.map((source) => <span key={`${update.job_id}-${source}`}>{source}</span>)}
+                      {update.sources.map((source, i) => <span key={`${update.job_id}-${source}-${i}`}>{source}</span>)}
                     </div>
                   </div>
                 </article>
