@@ -10,20 +10,28 @@ def _sentences(text: str) -> list[str]:
     return [part.strip() for part in parts if part.strip()]
 
 
+def _alias_in_text(alias: str, text_lower: str) -> bool:
+    alias_lower = alias.lower()
+    if len(alias_lower) <= 3:
+        pattern = r'(?<![a-zA-Z])' + re.escape(alias_lower) + r'(?![a-zA-Z])'
+        return bool(re.search(pattern, text_lower))
+    return alias_lower in text_lower
+
+
 def extract_skills(text: str) -> list[dict]:
     results: list[dict] = []
     lowered = text.lower()
     sentences = _sentences(text)
 
     for skill, aliases in SKILL_ALIASES.items():
-        matched_aliases = [alias for alias in aliases if alias.lower() in lowered]
+        matched_aliases = [alias for alias in aliases if _alias_in_text(alias, lowered)]
         if not matched_aliases:
             continue
 
         evidence = [
             sentence
             for sentence in sentences
-            if any(alias.lower() in sentence.lower() for alias in aliases)
+            if any(_alias_in_text(alias, sentence.lower()) for alias in aliases)
         ][:3]
         results.append(
             {

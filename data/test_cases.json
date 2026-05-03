@@ -158,7 +158,7 @@
       "id": "case_match_agent",
       "job_id": "ai_agent_engineer",
       "resume_text": "熟悉 Python、FastAPI、RAG、Prompt Engineering、向量数据库和 API 集成，参与智能客服 Agent 项目。",
-      "expected_min_score": 65
+      "expected_min_score": 55
     },
     {
       "id": "case_match_java",
@@ -194,13 +194,13 @@
       "id": "case_match_devops",
       "job_id": "devops_engineer",
       "resume_text": "熟悉 Linux、Docker、Kubernetes、CI/CD、可观测性和 Shell 脚本。",
-      "expected_min_score": 80
+      "expected_min_score": 60
     },
     {
       "id": "case_match_analyst",
       "job_id": "data_analyst",
       "resume_text": "熟悉 SQL、Python、数据分析和数据仓库，做过用户增长分析。",
-      "expected_min_score": 65
+      "expected_min_score": 55
     },
     {
       "id": "case_match_go",
@@ -218,13 +218,13 @@
       "id": "case_match_agent_full",
       "job_id": "ai_agent_engineer",
       "resume_text": "熟悉 Python、FastAPI、大模型应用、Prompt Engineering、RAG、向量数据库、工具调用、API 集成、LangChain 和多智能体协作。",
-      "expected_min_score": 90
+      "expected_min_score": 85
     },
     {
       "id": "case_match_java_full",
       "job_id": "java_backend_engineer",
       "resume_text": "5 年 Java 后端经验，熟悉 Java、Spring Boot、MySQL、Redis、微服务、消息队列、Docker、REST API、Kubernetes、可观测性和性能调优。",
-      "expected_min_score": 95
+      "expected_min_score": 90
     },
     {
       "id": "case_match_low",

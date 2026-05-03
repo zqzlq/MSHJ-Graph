@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db
 from app.schemas import MatchRequest, ResumeParseRequest
 from app.services.analysis import analyze_job_updates, discover_emerging_jobs, match_resume_to_job
+from app.services.evaluation import run_full_evaluation
 from app.services.graph import build_capability_graph
 from app.services.parser import parse_resume
 from app.services.repository import get_job, list_jd_records, list_jobs, list_resumes
@@ -102,3 +103,8 @@ def match(payload: MatchRequest) -> dict:
         return match_resume_to_job(payload.job_id, payload.resume_text)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/api/evaluation")
+def evaluation() -> dict:
+    return run_full_evaluation()

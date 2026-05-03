@@ -31,7 +31,7 @@ SKILL_ALIASES: dict[str, list[str]] = {
     "Redis": ["Redis", "redis"],
     "向量数据库": ["向量数据库", "向量检索", "Milvus", "FAISS", "Pinecone", "Chroma", "Weaviate"],
     "MongoDB": ["MongoDB", "mongodb", "mongo"],
-    "Elasticsearch": ["Elasticsearch", "ES", "ElasticSearch", "elastic"],
+    "Elasticsearch": ["Elasticsearch", "ElasticSearch", "elastic"],
     "PostgreSQL": ["PostgreSQL", "postgres", "pg"],
     # ── 大模型应用 ──
     "RAG": ["RAG", "检索增强", "知识库", "检索增强生成"],

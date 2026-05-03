@@ -5,6 +5,7 @@ import {
   BarChart3,
   BrainCircuit,
   CheckCircle2,
+  ClipboardCheck,
   Database,
   FileSearch,
   GitBranch,
@@ -16,7 +17,8 @@ import {
   ShieldCheck,
   Sparkles,
   Target,
-  TrendingUp
+  TrendingUp,
+  XCircle
 } from 'lucide-react';
 import './styles.css';
 
@@ -98,13 +100,81 @@ type MatchResult = {
   parsed_resume: ParsedResume;
 };
 
-type ModuleKey = 'overview' | 'graph' | 'evolution' | 'matching';
+type ExtractionDetail = {
+  case_id: string;
+  type: string;
+  precision: number;
+  recall: number;
+  f1: number;
+  tp: number;
+  fp: number;
+  fn: number;
+  expected: string[];
+  predicted: string[];
+  missing: string[];
+  extra: string[];
+};
+
+type MatchDetail = {
+  case_id: string;
+  job_id: string;
+  score: number;
+  expected_min_score: number;
+  passed: boolean;
+  covered_required: string[];
+  missing_required: string[];
+  diagnosis: string;
+};
+
+type DiscoveryDetail = {
+  job_id: string;
+  title: string;
+  confidence: number;
+  signal_count: number;
+  skills_count: number;
+};
+
+type EvaluationData = {
+  summary: {
+    skill_extraction_f1: number;
+    skill_extraction_precision: number;
+    skill_extraction_recall: number;
+    matching_accuracy: number;
+    matching_passed: string;
+    discovery_count: number;
+    high_confidence_discoveries: number;
+  };
+  skill_extraction: {
+    metric: string;
+    total_cases: number;
+    macro_avg: { precision: number; recall: number; f1: number };
+    micro_avg: { precision: number; recall: number; f1: number };
+    details: ExtractionDetail[];
+  };
+  matching: {
+    metric: string;
+    total_cases: number;
+    passed: number;
+    failed: number;
+    accuracy: number;
+    details: MatchDetail[];
+  };
+  discovery: {
+    metric: string;
+    total_discoveries: number;
+    high_confidence_count: number;
+    discoveries: DiscoveryDetail[];
+  };
+};
+
+type ModuleKey = 'overview' | 'graph' | 'evolution' | 'matching' | 'evaluation';
 
 const modules: Array<{ key: ModuleKey; label: string; icon: React.ReactNode }> = [
   { key: 'overview', label: '态势总览', icon: <BarChart3 size={18} /> },
   { key: 'graph', label: '图谱探索', icon: <Network size={18} /> },
   { key: 'evolution', label: '动态演化', icon: <TrendingUp size={18} /> },
-  { key: 'matching', label: '人岗诊断', icon: <Target size={18} /> }
+  { key: 'matching', label: '人岗诊断', icon: <Target size={18} /> },
+  { key: 'evaluation', label: '系统评测', icon: <ClipboardCheck size={18} /> }
 ];
 
 function Pill({ children, tone = 'blue' }: { children: React.ReactNode; tone?: 'blue' | 'green' | 'orange' | 'gray' | 'red' | 'purple' }) {
@@ -154,6 +224,7 @@ function App() {
   const [resumeText, setResumeText] = React.useState('');
   const [matchResult, setMatchResult] = React.useState<MatchResult | null>(null);
   const [parsedResume, setParsedResume] = React.useState<ParsedResume | null>(null);
+  const [evaluation, setEvaluation] = React.useState<EvaluationData | null>(null);
   const [activeModule, setActiveModule] = React.useState<ModuleKey>('overview');
   const [graphFilter, setGraphFilter] = React.useState('all');
   const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
@@ -165,11 +236,12 @@ function App() {
     setError('');
     try {
       await fetch(`${API_BASE}/api/init`, { method: 'POST' });
-      const [dashboardRes, graphRes, discoverRes, resumesRes] = await Promise.all([
+      const [dashboardRes, graphRes, discoverRes, resumesRes, evalRes] = await Promise.all([
         fetch(`${API_BASE}/api/dashboard`),
         fetch(`${API_BASE}/api/graph`),
         fetch(`${API_BASE}/api/discover`),
-        fetch(`${API_BASE}/api/resumes`)
+        fetch(`${API_BASE}/api/resumes`),
+        fetch(`${API_BASE}/api/evaluation`)
       ]);
       const dashboardData: Dashboard = await dashboardRes.json();
       const graphData: GraphData = await graphRes.json();
@@ -185,6 +257,7 @@ function App() {
       setResumes(resumeData);
       setResumeText(resumeData[0]?.text ?? '');
       setUpdates(Object.fromEntries(updatePairs));
+      setEvaluation(await evalRes.json());
     } catch {
       setError('无法连接后端服务，请先启动 FastAPI：uvicorn app.main:app --reload');
     } finally {
@@ -650,6 +723,104 @@ function App() {
             ) : <EmptyState text="解析简历后展示技能证据" />}
           </Card>
         </div>
+      ) : null}
+
+      {activeModule === 'evaluation' && evaluation ? (
+        <>
+          <section className="metrics">
+            <div className="metric-card">
+              <ClipboardCheck />
+              <strong>{Math.round(evaluation.summary.skill_extraction_f1 * 100)}%</strong>
+              <span>技能抽取 F1</span>
+              <small>Precision {Math.round(evaluation.summary.skill_extraction_precision * 100)}% / Recall {Math.round(evaluation.summary.skill_extraction_recall * 100)}%</small>
+            </div>
+            <div className="metric-card">
+              <Target />
+              <strong>{Math.round(evaluation.summary.matching_accuracy * 100)}%</strong>
+              <span>匹配准确率</span>
+              <small>{evaluation.summary.matching_passed} 通过</small>
+            </div>
+            <div className="metric-card">
+              <Sparkles />
+              <strong>{evaluation.summary.discovery_count}</strong>
+              <span>新岗位发现</span>
+              <small>{evaluation.summary.high_confidence_discoveries} 个高置信度</small>
+            </div>
+            <div className="metric-card">
+              <Database />
+              <strong>{evaluation.skill_extraction.total_cases}</strong>
+              <span>评测用例数</span>
+              <small>技能抽取 + 匹配验证</small>
+            </div>
+          </section>
+
+          <div className="grid two">
+            <Card title="技能抽取评测" subtitle="基于 30 条测试用例，验证 JD 和简历的技能识别准确率" icon={<ClipboardCheck />} accent>
+              <div className="change-grid">
+                <div>
+                  <b>Macro 平均</b>
+                  <Progress value={Math.round(evaluation.skill_extraction.macro_avg.precision * 100)} label="Precision" tone="green" />
+                  <Progress value={Math.round(evaluation.skill_extraction.macro_avg.recall * 100)} label="Recall" tone="blue" />
+                  <Progress value={Math.round(evaluation.skill_extraction.macro_avg.f1 * 100)} label="F1" tone="green" />
+                </div>
+                <div>
+                  <b>Micro 平均</b>
+                  <Progress value={Math.round(evaluation.skill_extraction.micro_avg.precision * 100)} label="Precision" tone="green" />
+                  <Progress value={Math.round(evaluation.skill_extraction.micro_avg.recall * 100)} label="Recall" tone="blue" />
+                  <Progress value={Math.round(evaluation.skill_extraction.micro_avg.f1 * 100)} label="F1" tone="green" />
+                </div>
+              </div>
+              <h4>逐条结果</h4>
+              <div className="eval-list">
+                {evaluation.skill_extraction.details.map((d) => (
+                  <div className="eval-row" key={d.case_id}>
+                    <span className={d.f1 >= 0.8 ? 'eval-pass' : 'eval-warn'}>
+                      {d.f1 >= 0.8 ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
+                    </span>
+                    <b>{d.case_id}</b>
+                    <Pill tone="gray">{d.type}</Pill>
+                    <span>P:{Math.round(d.precision * 100)}%</span>
+                    <span>R:{Math.round(d.recall * 100)}%</span>
+                    <span>F1:{Math.round(d.f1 * 100)}%</span>
+                    {d.extra.length ? <span className="muted">多识别: {d.extra.join(', ')}</span> : null}
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card title="人岗匹配评测" subtitle="验证匹配分数是否达到预期最低阈值" icon={<Target />}>
+              <Progress value={Math.round(evaluation.matching.accuracy * 100)} label="匹配准确率" tone={evaluation.matching.accuracy >= 0.9 ? 'green' : 'orange'} />
+              <h4>逐条结果</h4>
+              <div className="eval-list">
+                {evaluation.matching.details.map((d) => (
+                  <div className="eval-row" key={d.case_id}>
+                    <span className={d.passed ? 'eval-pass' : 'eval-fail'}>
+                      {d.passed ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
+                    </span>
+                    <b>{d.case_id}</b>
+                    <span>得分: {d.score}</span>
+                    <span>阈值: {d.expected_min_score}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          <Card title="新岗位发现结果" subtitle="基于新兴技术信号的岗位发现清单" icon={<Sparkles />}>
+            <div className="eval-list">
+              {evaluation.discovery.discoveries.map((d) => (
+                <div className="eval-row" key={d.job_id}>
+                  <div className="confidence" style={{ width: 48, height: 48, fontSize: 14 }}>
+                    {Math.round(d.confidence * 100)}%
+                  </div>
+                  <b>{d.title}</b>
+                  <span>{d.signal_count} 个新兴信号</span>
+                  <span>{d.skills_count} 项必备技能</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </>
       ) : null}
     </main>
   );
