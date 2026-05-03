@@ -235,6 +235,359 @@ function EmptyState({ text }: { text: string }) {
   return <div className="empty">{text}</div>;
 }
 
+type ForceNode = GraphNode & { x: number; y: number; vx: number; vy: number };
+
+function useForceSimulation(graph: GraphData | null, graphFilter: string) {
+  const nodesRef = React.useRef<ForceNode[]>([]);
+  const edgesRef = React.useRef<GraphEdge[]>([]);
+  const iterRef = React.useRef(0);
+  const rafRef = React.useRef(0);
+  const [version, setVersion] = React.useState(0);
+
+  const filteredNodes = React.useMemo(() => {
+    if (!graph) return [];
+    return graphFilter === 'all' ? graph.nodes : graph.nodes.filter((n) => n.type === graphFilter);
+  }, [graph?.nodes, graphFilter]);
+
+  const { nodes, edges } = React.useMemo(() => {
+    if (!graph) return { nodes: [] as GraphNode[], edges: [] as GraphEdge[] };
+    const ids = new Set(filteredNodes.map((n) => n.id));
+    graph.edges.forEach((e) => {
+      if (ids.has(e.source) || ids.has(e.target)) {
+        ids.add(e.source);
+        ids.add(e.target);
+      }
+    });
+    return {
+      nodes: graph.nodes.filter((n) => ids.has(n.id)),
+      edges: graph.edges.filter((e) => ids.has(e.source) && ids.has(e.target)),
+    };
+  }, [filteredNodes, graph]);
+
+  const graphRef = React.useRef({ nodes, edges });
+  graphRef.current = { nodes, edges };
+
+  React.useEffect(() => {
+    const W = 980, H = 620, CX = W / 2, CY = H / 2;
+    const { nodes: gNodes, edges: gEdges } = graphRef.current;
+    const nodeMap = new Map(nodesRef.current.map((n) => [n.id, n]));
+    const oldIds = new Set(nodeMap.keys());
+    const changed = gNodes.length !== oldIds.size || gNodes.some((n) => !oldIds.has(n.id));
+
+    if (changed) {
+      const kept = gNodes.filter((n) => nodeMap.has(n.id));
+      const added = gNodes.filter((n) => !nodeMap.has(n.id));
+      const angleStep = (2 * Math.PI) / Math.max(added.length, 1);
+      const newNodes: ForceNode[] = [
+        ...kept.map((n) => nodeMap.get(n.id)!),
+        ...added.map((n, i) => ({
+          ...n,
+          x: CX + Math.cos(i * angleStep) * 200 + (Math.random() - 0.5) * 60,
+          y: CY + Math.sin(i * angleStep) * 200 + (Math.random() - 0.5) * 60,
+          vx: 0,
+          vy: 0,
+        })),
+      ];
+      nodesRef.current = newNodes;
+      edgesRef.current = gEdges;
+      iterRef.current = 0;
+    }
+
+    if (nodesRef.current.length === 0) return;
+    let active = true;
+
+    function step() {
+      if (!active || iterRef.current >= 100) return;
+      const ns = nodesRef.current;
+      const es = edgesRef.current;
+      const N = ns.length;
+      const repulsion = 12000;
+      const damping = 0.88;
+      const maxV = 30;
+
+      for (let i = 0; i < N; i++) {
+        let fx = 0, fy = 0;
+        for (let j = 0; j < N; j++) {
+          if (i === j) continue;
+          const dx = ns[i].x - ns[j].x;
+          const dy = ns[i].y - ns[j].y;
+          const d2 = dx * dx + dy * dy + 1;
+          const f = repulsion / d2;
+          fx += (dx / Math.sqrt(d2)) * f;
+          fy += (dy / Math.sqrt(d2)) * f;
+        }
+        ns[i].vx = (ns[i].vx + fx) * damping;
+        ns[i].vy = (ns[i].vy + fy) * damping;
+      }
+
+      const nodeIndex = new Map(ns.map((n, i) => [n.id, i]));
+      for (const edge of es) {
+        const si = nodeIndex.get(edge.source);
+        const ti = nodeIndex.get(edge.target);
+        if (si === undefined || ti === undefined) continue;
+        const dx = ns[ti].x - ns[si].x;
+        const dy = ns[ti].y - ns[si].y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const targetDist = 200;
+        const force = (dist - targetDist) * 0.008;
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        ns[si].vx += fx;
+        ns[si].vy += fy;
+        ns[ti].vx -= fx;
+        ns[ti].vy -= fy;
+      }
+
+      for (const node of ns) {
+        node.vx += (CX - node.x) * 0.0008;
+        node.vy += (CY - node.y) * 0.0008;
+        node.vx = Math.max(-maxV, Math.min(maxV, node.vx));
+        node.vy = Math.max(-maxV, Math.min(maxV, node.vy));
+        node.x += node.vx;
+        node.y += node.vy;
+        node.x = Math.max(40, Math.min(W - 40, node.x));
+        node.y = Math.max(40, Math.min(H - 40, node.y));
+      }
+
+      iterRef.current++;
+      setVersion((v) => v + 1);
+      rafRef.current = requestAnimationFrame(step);
+    }
+
+    rafRef.current = requestAnimationFrame(step);
+    return () => {
+      active = false;
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [nodes, edges]);
+
+  const positions = React.useMemo(() => {
+    const pos: Record<string, { x: number; y: number }> = {};
+    for (const n of nodesRef.current) {
+      pos[n.id] = { x: n.x, y: n.y };
+    }
+    return pos;
+  }, [version]);
+
+  return { nodes, edges, positions, nodesRef };
+}
+
+function GraphCanvas({
+  nodes,
+  edges,
+  positions,
+  selectedNodeId,
+  onSelectNode,
+  nodesRef,
+}: {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  positions: Record<string, { x: number; y: number }>;
+  selectedNodeId: string | null;
+  onSelectNode: (id: string) => void;
+  nodesRef: React.RefObject<ForceNode[]>;
+}) {
+  const W = 980, H = 620;
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [viewBox, setViewBox] = React.useState({ x: 0, y: 0, w: W, h: H });
+  const [search, setSearch] = React.useState('');
+  const [dragging, setDragging] = React.useState<{ nodeId: string; offsetX: number; offsetY: number } | null>(null);
+  const [isPanning, setIsPanning] = React.useState(false);
+  const panStartRef = React.useRef({ x: 0, y: 0, vx: 0, vy: 0 });
+
+  const filteredEdges = edges.filter((e) => {
+    const s = positions[e.source], t = positions[e.target];
+    return s && t;
+  });
+
+  const searchLower = search.toLowerCase();
+  const searchMatchIds = React.useMemo(() => {
+    if (!searchLower) return new Set<string>();
+    return new Set(nodes.filter((n) => n.label.toLowerCase().includes(searchLower)).map((n) => n.id));
+  }, [nodes, searchLower]);
+
+  const relatedEdgeIds = React.useMemo(() => {
+    if (!selectedNodeId) return new Set<string>();
+    return new Set(edges.filter((e) => e.source === selectedNodeId || e.target === selectedNodeId).map((e) => `${e.source}-${e.target}`));
+  }, [edges, selectedNodeId]);
+
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const factor = e.deltaY > 0 ? 1.12 : 0.89;
+      setViewBox((vb) => {
+        const newW = Math.max(200, Math.min(W * 3, vb.w * factor));
+        const newH = Math.max(130, Math.min(H * 3, vb.h * factor));
+        const rect = el.getBoundingClientRect();
+        const mx = ((e.clientX - rect.left) / rect.width) * vb.w + vb.x;
+        const my = ((e.clientY - rect.top) / rect.height) * vb.h + vb.y;
+        return { x: mx - (mx - vb.x) * (newW / vb.w), y: my - (my - vb.y) * (newH / vb.h), w: newW, h: newH };
+      });
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
+  const handleCanvasMouseDown = (e: React.MouseEvent) => {
+    if (dragging) return;
+    setIsPanning(true);
+    panStartRef.current = { x: e.clientX, y: e.clientY, vx: viewBox.x, vy: viewBox.y };
+  };
+
+  React.useEffect(() => {
+    if (!isPanning) return;
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const scaleX = viewBox.w / rect.width;
+    const scaleY = viewBox.h / rect.height;
+    const onMove = (e: MouseEvent) => {
+      setViewBox((vb) => ({
+        ...vb,
+        x: panStartRef.current.vx - (e.clientX - panStartRef.current.x) * scaleX,
+        y: panStartRef.current.vy - (e.clientY - panStartRef.current.y) * scaleY,
+      }));
+    };
+    const onUp = () => setIsPanning(false);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, [isPanning, viewBox.w, viewBox.h]);
+
+  const toSvg = (clientX: number, clientY: number) => {
+    const el = containerRef.current!;
+    const rect = el.getBoundingClientRect();
+    return {
+      x: ((clientX - rect.left) / rect.width) * viewBox.w + viewBox.x,
+      y: ((clientY - rect.top) / rect.height) * viewBox.h + viewBox.y,
+    };
+  };
+
+  const handleNodeMouseDown = (e: React.MouseEvent, nodeId: string) => {
+    e.stopPropagation();
+    onSelectNode(nodeId);
+    const svg = toSvg(e.clientX, e.clientY);
+    const pos = positions[nodeId];
+    if (!pos) return;
+    setDragging({ nodeId, offsetX: svg.x - pos.x, offsetY: svg.y - pos.y });
+  };
+
+  React.useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent) => {
+      const svg = toSvg(e.clientX, e.clientY);
+      const node = nodesRef.current?.find((n: ForceNode) => n.id === dragging.nodeId);
+      if (node) {
+        node.x = svg.x - dragging.offsetX;
+        node.y = svg.y - dragging.offsetY;
+        node.vx = 0;
+        node.vy = 0;
+      }
+    };
+    const onUp = () => setDragging(null);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, [dragging]);
+
+  const centerOn = (x: number, y: number) => {
+    setViewBox({ x: x - W / 2, y: y - H / 2, w: W, h: H });
+  };
+
+  const handleSearchSelect = (nodeId: string) => {
+    onSelectNode(nodeId);
+    const pos = positions[nodeId];
+    if (pos) centerOn(pos.x, pos.y);
+  };
+
+  return (
+    <div>
+      <div className="graph-toolbar">
+        <input
+          className="graph-search"
+          type="text"
+          placeholder="搜索节点..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {searchLower && searchMatchIds.size > 0 && (
+          <div className="graph-search-results">
+            {nodes.filter((n) => searchMatchIds.has(n.id)).slice(0, 8).map((n) => (
+              <button key={n.id} className="graph-search-item" onClick={() => handleSearchSelect(n.id)}>
+                <Pill tone={n.type === 'job' ? 'gray' : n.type === 'skill' ? 'green' : n.type === 'skill_category' ? 'blue' : 'orange'}>{n.type}</Pill>
+                {n.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <div
+        ref={containerRef}
+        className="graph-canvas"
+        onMouseDown={handleCanvasMouseDown}
+        style={{ cursor: isPanning ? 'grabbing' : dragging ? 'grabbing' : 'default' }}
+      >
+        <svg
+          className="knowledge-graph"
+          viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
+          role="img"
+          aria-label="岗位能力知识图谱"
+        >
+          <defs>
+            <marker id="arrow" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="3">
+              <path d="M0,0 L0,6 L9,3 z" />
+            </marker>
+          </defs>
+          {filteredEdges.map((edge) => {
+            const s = positions[edge.source]!;
+            const t = positions[edge.target]!;
+            const isRelated = relatedEdgeIds.has(`${edge.source}-${edge.target}`);
+            return (
+              <g key={`${edge.source}-${edge.target}`} className={`graph-edge ${edge.relation} ${isRelated ? 'active' : ''}`}>
+                <line x1={s.x} y1={s.y} x2={t.x} y2={t.y} markerEnd="url(#arrow)" />
+                <text x={(s.x + t.x) / 2} y={(s.y + t.y) / 2 - 6}>{edge.relation}</text>
+              </g>
+            );
+          })}
+          {nodes.map((node) => {
+            const pos = positions[node.id];
+            if (!pos) return null;
+            const isSelected = selectedNodeId === node.id;
+            const isRelated = relatedEdgeIds.size > 0 && edges.some((e) => (e.source === selectedNodeId && e.target === node.id) || (e.target === selectedNodeId && e.source === node.id));
+            const isSearchMatch = searchMatchIds.has(node.id);
+            return (
+              <g
+                key={node.id}
+                className={`kg-node ${node.type} ${isSelected ? 'selected' : ''} ${isRelated ? 'related' : ''}`}
+                onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                style={{ cursor: 'grab' }}
+              >
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={node.type === 'job' ? 34 : 26}
+                  stroke={isSearchMatch ? '#ef4444' : undefined}
+                  strokeWidth={isSearchMatch ? 4 : undefined}
+                />
+                <text x={pos.x} y={pos.y + 5}>{node.label.length > 12 ? `${node.label.slice(0, 11)}...` : node.label}</text>
+                <title>{node.label}</title>
+              </g>
+            );
+          })}
+        </svg>
+        <div className="graph-legend">
+          <span><i className="legend-job" />岗位</span>
+          <span><i className="legend-skill" />技能点</span>
+          <span><i className="legend-category" />技能类别</span>
+          <span><i className="legend-scenario" />行业场景</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [dashboard, setDashboard] = React.useState<Dashboard | null>(null);
   const [graph, setGraph] = React.useState<GraphData | null>(null);
@@ -330,56 +683,10 @@ function App() {
     }
   }, [selectedJob, selectedResume?.id]);
 
-  const filteredNodes = React.useMemo(() => {
-    const nodes = graph?.nodes ?? [];
-    return graphFilter === 'all' ? nodes : nodes.filter((node) => node.type === graphFilter);
-  }, [graph?.nodes, graphFilter]);
+  const { nodes: forceNodes, edges: forceEdges, positions, nodesRef } = useForceSimulation(graph, graphFilter);
 
-  const visibleGraph = React.useMemo(() => {
-    if (!graph) {
-      return { nodes: [] as GraphNode[], edges: [] as GraphEdge[], positions: {} as Record<string, { x: number; y: number }> };
-    }
-
-    const seedIds = new Set(filteredNodes.map((node) => node.id));
-    const visibleIds = new Set(seedIds);
-    graph.edges.forEach((edge) => {
-      if (graphFilter === 'all' || seedIds.has(edge.source) || seedIds.has(edge.target)) {
-        visibleIds.add(edge.source);
-        visibleIds.add(edge.target);
-      }
-    });
-
-    const nodes = graph.nodes.filter((node) => visibleIds.has(node.id));
-    const edges = graph.edges.filter((edge) => visibleIds.has(edge.source) && visibleIds.has(edge.target));
-    const columns: Record<string, number> = {
-      job: 120,
-      skill: 430,
-      skill_category: 725,
-      scenario: 850
-    };
-    const grouped = nodes.reduce<Record<string, GraphNode[]>>((acc, node) => {
-      acc[node.type] = [...(acc[node.type] ?? []), node];
-      return acc;
-    }, {});
-    const positions: Record<string, { x: number; y: number }> = {};
-    const maxGroupSize = Math.max(...Object.values(grouped).map(g => g.length), 1);
-    const canvasHeight = Math.max(620, maxGroupSize * 28 + 100);
-
-    Object.entries(grouped).forEach(([type, group]) => {
-      const x = columns[type] ?? 500;
-      const gap = Math.min(48, Math.max(20, (canvasHeight - 100) / Math.max(group.length, 1)));
-      const startY = 40 + Math.max(0, ((canvasHeight - 80) - gap * (group.length - 1)) / 2);
-      group.forEach((node, index) => {
-        const offset = type === 'skill' ? (index % 2 === 0 ? -14 : 14) : 0;
-        positions[node.id] = { x: x + offset, y: startY + index * gap };
-      });
-    });
-
-    return { nodes, edges, positions, canvasHeight };
-  }, [filteredNodes, graph, graphFilter]);
-
-  const selectedNode = graph?.nodes.find((node) => node.id === selectedNodeId) ?? null;
-  const relatedEdges = graph?.edges.filter((edge) => edge.source === selectedNodeId || edge.target === selectedNodeId) ?? [];
+  const selectedNode = forceNodes.find((node) => node.id === selectedNodeId) ?? null;
+  const relatedEdges = forceEdges.filter((edge) => edge.source === selectedNodeId || edge.target === selectedNodeId);
   const nodeTypeCounts = React.useMemo(() => {
     return (graph?.nodes ?? []).reduce<Record<string, number>>((acc, node) => {
       acc[node.type] = (acc[node.type] ?? 0) + 1;
@@ -540,73 +847,29 @@ function App() {
               </button>
             </div>
             {graphView === 'topology' ? (
-            <>
-            <div className="filter-bar">
-              {[
-                ['all', '全部', graph?.nodes.length ?? 0],
-                ['job', '岗位', nodeTypeCounts.job ?? 0],
-                ['skill', '技能', nodeTypeCounts.skill ?? 0],
-                ['skill_category', '技能类别', nodeTypeCounts.skill_category ?? 0],
-                ['scenario', '行业场景', nodeTypeCounts.scenario ?? 0]
-              ].map(([key, label, count]) => (
-                <button key={String(key)} className={graphFilter === key ? 'active' : ''} onClick={() => setGraphFilter(String(key))}>
-                  {label}<span>{count}</span>
-                </button>
-              ))}
-            </div>
-            <div className="graph-canvas">
-              <svg className="knowledge-graph" viewBox={`0 0 980 ${visibleGraph.canvasHeight}`} role="img" aria-label="岗位能力知识图谱">
-                <defs>
-                  <marker id="arrow" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="3">
-                    <path d="M0,0 L0,6 L9,3 z" />
-                  </marker>
-                </defs>
-                {visibleGraph.edges.map((edge) => {
-                  const source = visibleGraph.positions[edge.source];
-                  const target = visibleGraph.positions[edge.target];
-                  if (!source || !target) {
-                    return null;
-                  }
-                  const isActive = edge.source === selectedNodeId || edge.target === selectedNodeId;
-                  const midX = (source.x + target.x) / 2;
-                  const midY = (source.y + target.y) / 2;
-                  return (
-                    <g key={`${edge.source}-${edge.target}`} className={`graph-edge ${edge.relation} ${isActive ? 'active' : ''}`}>
-                      <line x1={source.x} y1={source.y} x2={target.x} y2={target.y} markerEnd="url(#arrow)" />
-                      <text x={midX} y={midY - 6}>{edge.relation}</text>
-                    </g>
-                  );
-                })}
-                {visibleGraph.nodes.map((node) => {
-                  const position = visibleGraph.positions[node.id];
-                  if (!position) {
-                    return null;
-                  }
-                  const isSelected = selectedNodeId === node.id;
-                  const related = relatedEdges.some((edge) => edge.source === node.id || edge.target === node.id);
-                  return (
-                    <g
-                      key={node.id}
-                      className={`kg-node ${node.type} ${isSelected ? 'selected' : ''} ${related ? 'related' : ''}`}
-                      onClick={() => setSelectedNodeId(node.id)}
-                      tabIndex={0}
-                      role="button"
-                    >
-                      <circle cx={position.x} cy={position.y} r={node.type === 'job' ? 34 : 26} />
-                      <text x={position.x} y={position.y + 5}>{node.label.length > 12 ? `${node.label.slice(0, 11)}...` : node.label}</text>
-                      <title>{node.label}</title>
-                    </g>
-                  );
-                })}
-              </svg>
-              <div className="graph-legend">
-                <span><i className="legend-job" />岗位</span>
-                <span><i className="legend-skill" />技能点</span>
-                <span><i className="legend-category" />技能类别</span>
-                <span><i className="legend-scenario" />行业场景</span>
-              </div>
-            </div>
-            </>
+              <>
+                <div className="filter-bar">
+                  {[
+                    ['all', '全部', graph?.nodes.length ?? 0],
+                    ['job', '岗位', nodeTypeCounts.job ?? 0],
+                    ['skill', '技能', nodeTypeCounts.skill ?? 0],
+                    ['skill_category', '技能类别', nodeTypeCounts.skill_category ?? 0],
+                    ['scenario', '行业场景', nodeTypeCounts.scenario ?? 0]
+                  ].map(([key, label, count]) => (
+                    <button key={String(key)} className={graphFilter === key ? 'active' : ''} onClick={() => setGraphFilter(String(key))}>
+                      {label}<span>{count}</span>
+                    </button>
+                  ))}
+                </div>
+                <GraphCanvas
+                  nodes={forceNodes}
+                  edges={forceEdges}
+                  positions={positions}
+                  selectedNodeId={selectedNodeId}
+                  onSelectNode={setSelectedNodeId}
+                  nodesRef={nodesRef}
+                />
+              </>
             ) : null}
             {graphView === 'cluster' && clustering ? (
               <div className="cluster-view">

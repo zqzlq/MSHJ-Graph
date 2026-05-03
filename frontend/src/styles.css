@@ -510,8 +510,63 @@ p {
   border-radius: 22px;
   min-height: 620px;
   max-height: 80vh;
-  overflow: auto;
+  overflow: hidden;
   padding: 12px;
+  user-select: none;
+}
+
+.graph-toolbar {
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.graph-search {
+  background: #fbfdff;
+  border: 1px solid #d9e1ef;
+  border-radius: 14px;
+  color: #172033;
+  font: inherit;
+  font-size: 14px;
+  padding: 10px 14px;
+  width: 100%;
+}
+
+.graph-search:focus {
+  border-color: #2f6df6;
+  box-shadow: 0 0 0 3px rgba(47, 109, 246, 0.15);
+  outline: none;
+}
+
+.graph-search-results {
+  background: white;
+  border: 1px solid #e3e9f5;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(31, 45, 81, 0.15);
+  left: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 6px;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  z-index: 10;
+}
+
+.graph-search-item {
+  background: transparent;
+  border-radius: 10px;
+  color: #172033;
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  gap: 8px;
+  padding: 8px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.graph-search-item:hover {
+  background: #f3f6fb;
 }
 
 .knowledge-graph {
