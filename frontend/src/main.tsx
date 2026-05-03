@@ -257,7 +257,9 @@ function App() {
       setResumes(resumeData);
       setResumeText(resumeData[0]?.text ?? '');
       setUpdates(Object.fromEntries(updatePairs));
-      setEvaluation(await evalRes.json());
+      try {
+        if (evalRes.ok) setEvaluation(await evalRes.json());
+      } catch { /* evaluation API not available */ }
     } catch {
       setError('无法连接后端服务，请先启动 FastAPI：uvicorn app.main:app --reload');
     } finally {
