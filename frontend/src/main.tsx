@@ -268,26 +268,40 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
   graphRef.current = { nodes, edges };
 
   React.useEffect(() => {
-    const W = 1200, H = 750, CX = W / 2, CY = H / 2;
     const { nodes: gNodes, edges: gEdges } = graphRef.current;
     const nodeMap = new Map(nodesRef.current.map((n) => [n.id, n]));
     const oldIds = new Set(nodeMap.keys());
     const changed = gNodes.length !== oldIds.size || gNodes.some((n) => !oldIds.has(n.id));
 
     if (changed) {
-      const kept = gNodes.filter((n) => nodeMap.has(n.id));
-      const added = gNodes.filter((n) => !nodeMap.has(n.id));
-      const angleStep = (2 * Math.PI) / Math.max(added.length, 1);
-      const newNodes: ForceNode[] = [
-        ...kept.map((n) => nodeMap.get(n.id)!),
-        ...added.map((n, i) => ({
-          ...n,
-          x: CX + Math.cos(i * angleStep) * 280 + (Math.random() - 0.5) * 100,
-          y: CY + Math.sin(i * angleStep) * 280 + (Math.random() - 0.5) * 100,
-          vx: 0,
-          vy: 0,
-        })),
-      ];
+      const N = gNodes.length;
+      const W = Math.max(1600, Math.ceil(Math.sqrt(N * 12000)));
+      const H = Math.max(1000, Math.ceil(W * 0.65));
+      const columns: Record<string, number> = { job: 0.12, skill: 0.4, skill_category: 0.7, scenario: 0.9 };
+      const grouped: Record<string, typeof gNodes> = {};
+      for (const n of gNodes) {
+        (grouped[n.type] ??= []).push(n);
+      }
+      const newNodes: ForceNode[] = [];
+      for (const [type, group] of Object.entries(grouped)) {
+        const x = (columns[type] ?? 0.5) * W;
+        const gap = Math.max(50, (H - 100) / Math.max(group.length, 1));
+        const startY = (H - gap * (group.length - 1)) / 2;
+        for (let i = 0; i < group.length; i++) {
+          const existing = nodeMap.get(group[i].id);
+          if (existing) {
+            newNodes.push(existing);
+          } else {
+            newNodes.push({
+              ...group[i],
+              x: x + (Math.random() - 0.5) * 40,
+              y: startY + i * gap + (Math.random() - 0.5) * 20,
+              vx: 0,
+              vy: 0,
+            });
+          }
+        }
+      }
       nodesRef.current = newNodes;
       edgesRef.current = gEdges;
       iterRef.current = 0;
@@ -297,14 +311,17 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
     let active = true;
 
     function step() {
-      if (!active || iterRef.current >= 250) return;
+      if (!active || iterRef.current >= 300) return;
       const ns = nodesRef.current;
       const es = edgesRef.current;
       const N = ns.length;
-      const repulsion = 45000;
-      const damping = 0.82;
-      const maxV = 40;
-      const minDist = 90;
+      const W = Math.max(1600, Math.ceil(Math.sqrt(N * 12000)));
+      const H = Math.max(1000, Math.ceil(W * 0.65));
+      const CX = W / 2, CY = H / 2;
+      const repulsion = 80000 + N * 600;
+      const damping = 0.78;
+      const maxV = 50;
+      const minDist = 80;
 
       for (let i = 0; i < N; i++) {
         let fx = 0, fy = 0;
@@ -313,11 +330,11 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
           const dx = ns[i].x - ns[j].x;
           const dy = ns[i].y - ns[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const f = repulsion / (dist * dist);
+          const f = repulsion / (dist * dist + 100);
           fx += (dx / dist) * f;
           fy += (dy / dist) * f;
           if (dist < minDist) {
-            const push = (minDist - dist) * 0.5;
+            const push = (minDist - dist) * 1.2;
             fx += (dx / dist) * push;
             fy += (dy / dist) * push;
           }
@@ -334,8 +351,8 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
         const dx = ns[ti].x - ns[si].x;
         const dy = ns[ti].y - ns[si].y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const targetDist = 220;
-        const force = (dist - targetDist) * 0.006;
+        const targetDist = 180;
+        const force = (dist - targetDist) * 0.004;
         const fx = (dx / dist) * force;
         const fy = (dy / dist) * force;
         ns[si].vx += fx;
@@ -345,14 +362,14 @@ function useForceSimulation(graph: GraphData | null, graphFilter: string) {
       }
 
       for (const node of ns) {
-        node.vx += (CX - node.x) * 0.001;
-        node.vy += (CY - node.y) * 0.001;
+        node.vx += (CX - node.x) * 0.0005;
+        node.vy += (CY - node.y) * 0.0005;
         node.vx = Math.max(-maxV, Math.min(maxV, node.vx));
         node.vy = Math.max(-maxV, Math.min(maxV, node.vy));
         node.x += node.vx;
         node.y += node.vy;
-        node.x = Math.max(60, Math.min(W - 60, node.x));
-        node.y = Math.max(60, Math.min(H - 60, node.y));
+        node.x = Math.max(50, Math.min(W - 50, node.x));
+        node.y = Math.max(50, Math.min(H - 50, node.y));
       }
 
       iterRef.current++;
@@ -393,9 +410,11 @@ function GraphCanvas({
   onSelectNode: (id: string) => void;
   nodesRef: React.RefObject<ForceNode[]>;
 }) {
-  const W = 1200, H = 750;
+  const N = nodes.length;
+  const W = Math.max(1600, Math.ceil(Math.sqrt(N * 12000)));
+  const H = Math.max(1000, Math.ceil(W * 0.65));
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [viewBox, setViewBox] = React.useState({ x: 0, y: 0, w: W, h: H });
+  const [viewBox, setViewBox] = React.useState({ x: -100, y: -100, w: W + 200, h: H + 200 });
   const [search, setSearch] = React.useState('');
   const [dragging, setDragging] = React.useState<{ nodeId: string; offsetX: number; offsetY: number } | null>(null);
   const [isPanning, setIsPanning] = React.useState(false);
@@ -405,6 +424,10 @@ function GraphCanvas({
     const s = positions[e.source], t = positions[e.target];
     return s && t;
   });
+
+  React.useEffect(() => {
+    setViewBox({ x: -100, y: -100, w: W + 200, h: H + 200 });
+  }, [W, H]);
 
   const searchLower = search.toLowerCase();
   const searchMatchIds = React.useMemo(() => {
@@ -573,11 +596,11 @@ function GraphCanvas({
                 <circle
                   cx={pos.x}
                   cy={pos.y}
-                  r={node.type === 'job' ? 34 : 26}
+                  r={node.type === 'job' ? 28 : 20}
                   stroke={isSearchMatch ? '#ef4444' : undefined}
                   strokeWidth={isSearchMatch ? 4 : undefined}
                 />
-                <text x={pos.x} y={pos.y + 5}>{node.label.length > 12 ? `${node.label.slice(0, 11)}...` : node.label}</text>
+                <text x={pos.x} y={pos.y + 4} fontSize="10">{node.label.length > 8 ? `${node.label.slice(0, 7)}…` : node.label}</text>
                 <title>{node.label}</title>
               </g>
             );
