@@ -605,6 +605,7 @@ function App() {
                 <span><i className="legend-category" />技能类别</span>
                 <span><i className="legend-scenario" />行业场景</span>
               </div>
+            </div>
             </>
             ) : null}
             {graphView === 'cluster' && clustering ? (
@@ -646,7 +647,6 @@ function App() {
                 </div>
               </div>
             ) : null}
-            </div>
           </Card>
 
           <Card title="节点关系详情" subtitle="展示证据化关系，便于评审理解图谱如何生成" icon={<Search />}>
