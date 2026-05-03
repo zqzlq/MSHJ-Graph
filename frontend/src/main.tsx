@@ -426,7 +426,6 @@ function GraphCanvas({
                   d={`M${s.x},${s.y} Q${cp},${(s.y + t.y) / 2} ${t.x},${t.y}`}
                   fill="none"
                   markerEnd="url(#arrow)"
-                  style={{ stroke: 'inherit', strokeWidth: 'inherit' }}
                 />
                 <text x={cp} y={(s.y + t.y) / 2 - 8} textAnchor="middle">{edge.relation}</text>
               </g>
